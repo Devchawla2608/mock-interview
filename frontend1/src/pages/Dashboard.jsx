@@ -1,88 +1,103 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import Header from '../components/Layout/Header';
+import Sidebar from '../components/Layout/Sidebar';
+import CandidateDashboard from './candidate/CandidateDashboard';
+import InterviewerDashboard from './interviewer/InterviewerDashboard';
+// import AdminDashboard from './admin/AdminDashboard';
+import BookingFlow from './candidate/BookingFlow';
+import InterviewManagement from './candidate/InterviewManagement';
+import FeedbackReviews from './candidate/FeedbackReviews';
+import PaymentHistory from './candidate/PaymentHistory';
+import ProfileSettings from './shared/ProfileSettings'
+import CalendarAvailability from './interviewer/CalendarAvailability';
+import InterviewRequests from './interviewer/InterviewRequests';
+import EarningsDashboard from './interviewer/EarningsDashboard';
+import InterviewerReviews from './interviewer/InterviewerReviews';
+// import InterviewerApprovals from './admin/InterviewerApprovals';
+// import LiveInterviews from './admin/LiveInterviews';
+// import CompanyManagement from './admin/CompanyManagement';
+// import DisputeResolution from './admin/DisputeResolution';
+// import PlatformAnalytics from './admin/PlatformAnalytics';
+// import PlatformSettings from './admin/PlatformSettings';
 import { useAuth } from '../components/contexts/AuthContext';
-const Dashboard = () => {
-  const navigate = useNavigate();
-  const { logout } = useAuth();
-  const handleSignOut = async() => {
-    await logout()
+
+function Dashboard() {
+  const { user } = useAuth();
+  const [activeItem, setActiveItem] = useState('dashboard');
+
+  const renderContent = () => {
+    switch (user && user.role) {
+      case 'candidate':
+        switch (activeItem) {
+          case 'dashboard':
+            return <CandidateDashboard />;
+          case 'book-interview':
+            return <BookingFlow />;
+          case 'interviews':
+            return <InterviewManagement />;
+          case 'feedback':
+            return <FeedbackReviews />;
+          case 'payments':
+            return <PaymentHistory />;
+          case 'profile':
+            return <ProfileSettings />;
+          default:
+            return <CandidateDashboard />;
+        }
+      case 'interviewer':
+        switch (activeItem) {
+          case 'dashboard':
+            return <InterviewerDashboard />;
+          case 'calendar':
+            return <CalendarAvailability />;
+          case 'interviews':
+            return <InterviewRequests />;
+          case 'earnings':
+            return <EarningsDashboard />;
+          case 'feedback':
+            return <InterviewerReviews />;
+          case 'profile':
+            return <ProfileSettings />;
+          default:
+            return <InterviewerDashboard />;
+        }
+      // case 'admin':
+      //   switch (activeItem) {
+      //     case 'dashboard':
+      //       return <AdminDashboard />;
+      //     case 'interviewers':
+      //       return <InterviewerApprovals />;
+      //     case 'interviews':
+      //       return <LiveInterviews />;
+      //     case 'companies':
+      //       return <CompanyManagement />;
+      //     case 'disputes':
+      //       return <DisputeResolution />;
+      //     case 'analytics':
+      //       return <PlatformAnalytics />;
+      //     case 'settings':
+      //       return <PlatformSettings />;
+      //     default:
+      //       return <AdminDashboard />;
+      //   }
+      default:
+        return <CandidateDashboard />;
+    }
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <h1>Welcome to the Dashboard</h1>
-        <button onClick={handleSignOut} style={styles.signOutBtn}>Sign Out</button>
-      </div>
-
-      <div style={styles.statsContainer}>
-        <div style={styles.card}>
-          <h3>Total Users</h3>
-          <p>1,234</p>
-        </div>
-        <div style={styles.card}>
-          <h3>Active Sessions</h3>
-          <p>87</p>
-        </div>
-        <div style={styles.card}>
-          <h3>New Signups</h3>
-          <p>56</p>
-        </div>
-      </div>
-
-      <div style={styles.recentActivity}>
-        <h2>Recent Activity</h2>
-        <ul>
-          <li>User JohnDoe registered</li>
-          <li>Admin updated pricing</li>
-          <li>Support ticket resolved</li>
-        </ul>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <Header />
+      <div className="flex h-[calc(100vh-80px)]">
+        <Sidebar activeItem={activeItem} onItemClick={setActiveItem} />
+        <main className="flex-1 overflow-auto">
+          <div className="p-6">
+            {renderContent()}
+          </div>
+        </main>
       </div>
     </div>
   );
-};
-
-// Inline styles
-const styles = {
-  container: {
-    padding: '2rem',
-    fontFamily: 'Arial, sans-serif',
-    backgroundColor: '#f9f9f9',
-    minHeight: '100vh',
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '2rem',
-  },
-  signOutBtn: {
-    padding: '0.5rem 1rem',
-    backgroundColor: '#e74c3c',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-  },
-  statsContainer: {
-    display: 'flex',
-    gap: '1rem',
-    marginBottom: '2rem',
-  },
-  card: {
-    flex: 1,
-    background: '#fff',
-    padding: '1rem',
-    borderRadius: '8px',
-    boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-    textAlign: 'center',
-  },
-  recentActivity: {
-    background: '#fff',
-    padding: '1rem',
-    borderRadius: '8px',
-    boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-  }
-};
+}
 
 export default Dashboard;

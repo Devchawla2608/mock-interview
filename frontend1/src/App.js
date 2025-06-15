@@ -5,7 +5,7 @@ import { ThemeProvider } from './components/contexts/ThemeContext.jsx';
 import AuthPage from './pages/AuthPage.jsx';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Dashboard from './pages/Dashboard';
+import Dashboard from './pages/Dashboard.jsx';
 
 const AppContent = () => {
   const { user, isLoading } = useAuth();
