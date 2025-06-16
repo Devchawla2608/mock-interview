@@ -7,6 +7,7 @@ import { companies, categoryInfo, timeSlots } from '../../components/data/sample
 import { Calendar as CalendarIcon } from 'lucide-react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import {toast} from 'react-toastify'
 
 function BookingFlow() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -70,12 +71,26 @@ function BookingFlow() {
     setShowConfirmModal(true);
   };
 
-  const handleBookingConfirm = () => {
+  const handleBookingConfirm = async() => {
     // Handle booking confirmation
-    console.log('Booking confirmed:', bookingData);
-    bookingData['completed'] = false
+      console.log('Booking confirmed:', bookingData);
+      bookingData['completed'] = false
+      const response = await fetch('http://localhost:3001/api/interview/bookInterview', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+        },
+        body: JSON.stringify(bookingData),
+      });
+    if(response.status != 200){
+      toast.error("Ops, We are facing some issues, please try again");
+      setShowConfirmModal(false);
+      return false;
+    }
+    toast.success("Ohh Wow, Your interview booked")
     setShowConfirmModal(false);
-    // Redirect to payment or success page
+
   };
 
   return (

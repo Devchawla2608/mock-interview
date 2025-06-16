@@ -24,10 +24,10 @@ function Sidebar({ activeItem, onItemClick }) {
         return [
           { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
           { id: 'book-interview', label: 'Book Interview', icon: Calendar },
-          { id: 'interviews', label: 'My Interviews', icon: BookOpen },
-          { id: 'feedback', label: 'Feedback & Reviews', icon: Star },
-          { id: 'payments', label: 'Payments', icon: CreditCard },
-          { id: 'profile', label: 'Profile', icon: Settings },
+          // { id: 'interviews', label: 'My Interviews', icon: BookOpen },
+          // { id: 'feedback', label: 'Feedback & Reviews', icon: Star },
+          // { id: 'payments', label: 'Payments', icon: CreditCard },
+          // { id: 'profile', label: 'Profile', icon: Settings },
         ];
       case 'interviewer':
         return [

@@ -29,7 +29,7 @@ function AuthProvider({ children }) {
     setIsLoading(true);
     
     // Simulate API call
-    const response = await fetch('http://localhost:3001/api/auth/login', {
+    let response = await fetch('http://localhost:3001/api/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -41,6 +41,8 @@ function AuthProvider({ children }) {
       setIsLoading(false);
       return false;
     }
+    response = await response.json()
+    localStorage.setItem("access_token" , response?.token)
     toast.success("Logged in succesfully")
     if (userData.role === 'interviewer') {
       userData = { ...sampleInterviewer };
