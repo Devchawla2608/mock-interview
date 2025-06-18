@@ -64,8 +64,8 @@ function generatePerformanceDataByDate(interviews) {
         0
       );
       const avgRating =
-        completedInterviews.length > 0
-          ? (totalRating / completedInterviews.length).toFixed(1)
+        completedInterviews?.length > 0
+          ? (totalRating / completedInterviews?.length).toFixed(1)
           : "0.0";
       setAverageRating(avgRating)
       calculateImprovementPercentage(completedInterviews)
@@ -107,7 +107,7 @@ function generatePerformanceDataByDate(interviews) {
           <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mx-auto mb-3">
             <BookOpen className="w-6 h-6 text-blue-600 dark:text-blue-400" />
           </div>
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{completedInterviews.length}</h3>
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{completedInterviews?.length}</h3>
           <p className="text-gray-600 dark:text-gray-400">Interviews Completed</p>
         </Card>
 

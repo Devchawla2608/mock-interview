@@ -3,7 +3,7 @@ import Header from '../components/Layout/Header';
 import Sidebar from '../components/Layout/Sidebar';
 import CandidateDashboard from './candidate/CandidateDashboard';
 import InterviewerDashboard from './interviewer/InterviewerDashboard';
-// import AdminDashboard from './admin/AdminDashboard';
+import AdminDashboard from './admin/AdminDashboard';
 import BookingFlow from './candidate/BookingFlow';
 import InterviewManagement from './candidate/InterviewManagement';
 import FeedbackReviews from './candidate/FeedbackReviews';
@@ -38,15 +38,28 @@ function Dashboard() {
           },
         });
         response = await response.json()
-        setInterviews(response?.interviews)
-        const completedInterviews = response?.interviews?.filter(
+        let myInterviews;
+        if (user.role == 'candidate') {
+          myInterviews = response?.interviews?.filter(
+            interview => interview.candidateEmail === user.email
+          );
+          console.log("myInterviews" , myInterviews)
+        } else {
+          myInterviews = response?.interviews?.filter(
+            interview => interview.interviewerEmail == "dev.chawla2608@gmail.com"
+          );
+          console.log("myInterviews" , myInterviews , user.email)
+
+        }
+        setInterviews(myInterviews)
+        const mycompletedInterviews = myInterviews?.filter(
           interview => interview.completed == true
         );
-        const activeInterviews = response?.interviews?.filter(
+        const myActiveInterviews = myInterviews?.filter(
           interview => interview.completed != true
         );
-        setCompletedInterviews(completedInterviews)
-        setActiveInterviews(activeInterviews)
+        setCompletedInterviews(mycompletedInterviews)
+        setActiveInterviews(myActiveInterviews)
       }
     getUserInterviews()
     },[])
@@ -89,7 +102,15 @@ function Dashboard() {
       case 'interviewer':
         switch (activeItem) {
           case 'dashboard':
-            return <InterviewerDashboard />;
+            return <InterviewerDashboard
+            setActiveItem={setActiveItem} 
+            interviews={interviews}
+            setInterviews={setInterviews}
+            activeInterviews={activeInterviews}
+            setActiveInterviews={setActiveInterviews}
+            completedInterviews={completedInterviews}
+            setCompletedInterviews={setCompletedInterviews}
+            />;
           case 'calendar':
             return <CalendarAvailability />;
           case 'interviews':
@@ -103,25 +124,25 @@ function Dashboard() {
           default:
             return <InterviewerDashboard />;
         }
-      // case 'admin':
-      //   switch (activeItem) {
-      //     case 'dashboard':
-      //       return <AdminDashboard />;
-      //     case 'interviewers':
-      //       return <InterviewerApprovals />;
-      //     case 'interviews':
-      //       return <LiveInterviews />;
-      //     case 'companies':
-      //       return <CompanyManagement />;
-      //     case 'disputes':
-      //       return <DisputeResolution />;
-      //     case 'analytics':
-      //       return <PlatformAnalytics />;
-      //     case 'settings':
-      //       return <PlatformSettings />;
-      //     default:
-      //       return <AdminDashboard />;
-      //   }
+      case 'admin':
+        switch (activeItem) {
+          case 'dashboard':
+            return <AdminDashboard />;
+          // case 'interviewers':
+          //   return <InterviewerApprovals />;
+          // case 'interviews':
+          //   return <LiveInterviews />;
+          // case 'companies':
+          //   return <CompanyManagement />;
+          // case 'disputes':
+          //   return <DisputeResolution />;
+          // case 'analytics':
+          //   return <PlatformAnalytics />;
+          // case 'settings':
+          //   return <PlatformSettings />;
+          // default:
+          //   return <AdminDashboard />;
+        }
       default:
         return <CandidateDashboard />;
     }

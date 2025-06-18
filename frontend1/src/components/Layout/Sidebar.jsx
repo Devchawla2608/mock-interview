@@ -33,9 +33,9 @@ function Sidebar({ activeItem, onItemClick }) {
         return [
           { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
           { id: 'calendar', label: 'Calendar & Availability', icon: Calendar },
-          { id: 'interviews', label: 'Interview Requests', icon: BookOpen },
-          { id: 'earnings', label: 'Earnings', icon: TrendingUp },
-          { id: 'feedback', label: 'Reviews', icon: Star },
+          // { id: 'interviews', label: 'Interview Requests', icon: BookOpen },
+          // { id: 'earnings', label: 'Earnings', icon: TrendingUp },
+          // { id: 'feedback', label: 'Reviews', icon: Star },
           { id: 'profile', label: 'Profile', icon: Settings },
         ];
       case 'admin':

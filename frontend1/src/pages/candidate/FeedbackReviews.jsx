@@ -11,7 +11,7 @@ function FeedbackReviews() {
   const completedInterviews = sampleInterviews.filter(i => i.status === 'completed' && i.feedback);
   
   const averageRating = completedInterviews.reduce((sum, interview) => 
-    sum + (interview.feedback?.rating || 0), 0) / completedInterviews.length || 0;
+    sum + (interview.feedback?.rating || 0), 0) / completedInterviews?.length || 0;
 
   const skillsData = [
     { skill: 'Technical Skills', score: 4.2, maxScore: 5 },
@@ -82,7 +82,7 @@ function FeedbackReviews() {
           <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mx-auto mb-3">
             <Target className="w-6 h-6 text-blue-600 dark:text-blue-400" />
           </div>
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{completedInterviews.length}</h3>
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{completedInterviews?.length}</h3>
           <p className="text-gray-600 dark:text-gray-400">Reviews Received</p>
         </Card>
 
