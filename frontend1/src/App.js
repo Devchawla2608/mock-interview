@@ -6,6 +6,7 @@ import AuthPage from './pages/AuthPage.jsx';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Dashboard from './pages/Dashboard.jsx';
+import BookingFlow from './pages/candidate/BookingFlow.jsx';
 
 const AppContent = () => {
   const { user, isLoading } = useAuth();

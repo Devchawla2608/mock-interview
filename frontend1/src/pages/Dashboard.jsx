@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import Header from '../components/Layout/Header';
 import Sidebar from '../components/Layout/Sidebar';
 import CandidateDashboard from './candidate/CandidateDashboard';
@@ -24,17 +24,59 @@ import { useAuth } from '../components/contexts/AuthContext';
 function Dashboard() {
   const { user } = useAuth();
   const [activeItem, setActiveItem] = useState('dashboard');
+  const [interviews,  setInterviews] = useState([])
+  const [completedInterviews , setCompletedInterviews] = useState([])
+  const [activeInterviews , setActiveInterviews] = useState([])
+
+    useEffect(()=>{
+      async function getUserInterviews(){
+        let user = JSON.parse(localStorage.getItem('user'))
+        let response = await fetch(`http://localhost:3001/api/interview/interviews/${user.email}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        response = await response.json()
+        setInterviews(response?.interviews)
+        const completedInterviews = response?.interviews?.filter(
+          interview => interview.completed == true
+        );
+        const activeInterviews = response?.interviews?.filter(
+          interview => interview.completed != true
+        );
+        setCompletedInterviews(completedInterviews)
+        setActiveInterviews(activeInterviews)
+      }
+    getUserInterviews()
+    },[])
 
   const renderContent = () => {
     switch (user && user.role) {
       case 'candidate':
         switch (activeItem) {
           case 'dashboard':
-            return <CandidateDashboard />;
+            return <CandidateDashboard 
+            setActiveItem={setActiveItem} 
+            interviews={interviews}
+            setInterviews={setInterviews}
+            activeInterviews={activeInterviews}
+            setActiveInterviews={setActiveInterviews}
+            completedInterviews={completedInterviews}
+            setCompletedInterviews={setCompletedInterviews}
+            />;
           case 'book-interview':
             return <BookingFlow />;
           case 'interviews':
-            return <InterviewManagement />;
+            return <InterviewManagement 
+                setActiveItem={setActiveItem} 
+                interviews={interviews}
+                setInterviews={setInterviews}
+                activeInterviews={activeInterviews}
+                setActiveInterviews={setActiveInterviews}
+                completedInterviews={completedInterviews}
+                setCompletedInterviews={setCompletedInterviews}
+            />;
           case 'feedback':
             return <FeedbackReviews />;
           case 'payments':

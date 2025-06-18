@@ -52,6 +52,7 @@ function BookingFlow() {
   const handleCompanySelect = (company) => {
     setBookingData({ 
       ...bookingData, 
+      companyName: company.name,
       companyId: company.id, 
       category: company.category,
       price: categoryInfo.find(c => c.category === company.category)?.price
@@ -75,6 +76,7 @@ function BookingFlow() {
     // Handle booking confirmation
       console.log('Booking confirmed:', bookingData);
       bookingData['completed'] = false
+      bookingData['candidateEmail'] = JSON.parse(localStorage.getItem('user'))?.email
       const response = await fetch('http://localhost:3001/api/interview/bookInterview', {
         method: 'POST',
         headers: {
