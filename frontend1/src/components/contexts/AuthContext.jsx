@@ -44,28 +44,59 @@ function AuthProvider({ children }) {
     response = await response.json()
     localStorage.setItem("access_token" , response?.token)
     toast.success("Logged in succesfully")
-    if (userData.role === 'interviewer') {
-      userData = { ...sampleInterviewer };
-    } else if (userData.role === 'admin') {
-      userData = {
-        id: '3',
-        email: userData.email,
-        name: 'Admin User',
-        role: 'admin',
-        avatar: 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop',
-        profileCompletion: 100,
-        createdAt: new Date(),
-        permissions: ['all']
-      };
-    } else {
-      userData = { ...sampleCandidate, email : userData.email };
-    }
-    
     setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('user', JSON.stringify(response?.user));
     setIsLoading(false);
     return true;
   };
+
+  const updateProfile = async (formData) =>{
+    setIsLoading(true);
+    
+    // Here you would typically send the updated user data to your backend API
+    let userData; 
+    if(formData?.role == 'candidate'){
+      userData = {  
+        name: formData.name,
+        phoneNumber: formData.phone,
+        location: formData.location,
+        bio: formData.bio,
+        company: formData.company,
+        currentRole: formData.currentRole,
+        experience: formData.experience,
+        skills: formData.skills,
+        linkedin: formData.linkedin,
+        github: formData.github,
+        codeForces: formData.codeForces,
+        codeChef: formData.codeChef,
+        leetcode: formData.leetcode,
+        profileCompletion: '100',
+        currentRole: formData.currentRole,
+        currentCompany: formData.company,
+        experience: formData.experience,
+      }
+    }
+    // Simulate API call
+    let response = await fetch('http://localhost:3001/api/auth/update-profile', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    });
+    if(response.status != 200){
+      toast.error("Ops, We are facing some issues, please try again");
+      setIsLoading(false);
+      return false;
+    }
+    response = await response.json()
+    console.log(response)
+    toast.success("Profile updated successfully");
+    setUser(response?.user);
+    localStorage.setItem('user', JSON.stringify(response?.user));
+    setIsLoading(false);
+    return true;
+  }
 
   const register = async (userData) => {
     try{
@@ -128,7 +159,8 @@ function AuthProvider({ children }) {
     logout,
     register,
     isLoading,
-    switchRole
+    switchRole,
+    updateProfile
   };
 
   return (

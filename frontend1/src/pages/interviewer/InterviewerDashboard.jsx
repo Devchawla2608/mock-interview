@@ -100,11 +100,11 @@ function InterviewerDashboard({setActiveItem , interviews , setInterviews , acti
           <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center mx-auto mb-3">
             <DollarSign className="w-6 h-6 text-green-600 dark:text-green-400" />
           </div>
-          {user.categories[0] == 'A' && <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{(completedInterviews?.length)*149} Rs.</h3>
+          {user?.categories == 'A' && <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{(completedInterviews?.length)*149} Rs.</h3>
 }
-          {user.categories[0] == 'B' && <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{(completedInterviews?.length)*99} Rs.</h3>
+          {user?.categories == 'B' && <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{(completedInterviews?.length)*99} Rs.</h3>
 }
-          {user.categories[0] == 'C' && <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{(completedInterviews?.length)*49} Rs.</h3>
+          {user?.categories == 'C' && <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{(completedInterviews?.length)*49} Rs.</h3>
 }
           <p className="text-gray-600 dark:text-gray-400">Total Earnings</p>
         </Card>

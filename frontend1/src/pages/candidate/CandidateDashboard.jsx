@@ -23,8 +23,7 @@ function calculateImprovementPercentage(interviews) {
   );
 
   // Extract and parse candidate ratings
-  const ratings = completedInterviews
-    .map(interview => parseFloat(interview.candidateRating))
+  const ratings = completedInterviews?.map(interview => parseFloat(interview.candidateRating))
     .filter(rating => !isNaN(rating));
 
   // Need at least 2 ratings to calculate improvement
@@ -133,7 +132,7 @@ function generatePerformanceDataByDate(interviews) {
         {/* Left Column */}
         <div className="lg:col-span-2 space-y-6">
           {/* Next Interview */}
-          {activeInterviews.length != 0 && (
+          {activeInterviews?.length != 0 && (
             <Card>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Upcoming Interview</h2>
@@ -142,7 +141,7 @@ function generatePerformanceDataByDate(interviews) {
                 </span>
               </div>
 <div className="space-y-6">
-  {activeInterviews.map((interview) => {
+  {activeInterviews?.map((interview) => {
 
     return (
       <div
