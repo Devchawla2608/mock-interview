@@ -1,4 +1,4 @@
-import React, { useState , useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/Layout/Header';
 import Sidebar from '../components/Layout/Sidebar';
 import CandidateDashboard from './candidate/CandidateDashboard';
@@ -13,6 +13,7 @@ import CalendarAvailability from './interviewer/CalendarAvailability';
 import InterviewRequests from './interviewer/InterviewRequests';
 import EarningsDashboard from './interviewer/EarningsDashboard';
 import InterviewerReviews from './interviewer/InterviewerReviews';
+import NotApprovedDashboard from './interviewer/NotApprovedDashboard';
 // import InterviewerApprovals from './admin/InterviewerApprovals';
 // import LiveInterviews from './admin/LiveInterviews';
 // import CompanyManagement from './admin/CompanyManagement';
@@ -24,71 +25,71 @@ import { useAuth } from '../components/contexts/AuthContext';
 function Dashboard() {
   const { user } = useAuth();
   const [activeItem, setActiveItem] = useState('dashboard');
-  const [interviews,  setInterviews] = useState([])
-  const [completedInterviews , setCompletedInterviews] = useState([])
-  const [activeInterviews , setActiveInterviews] = useState([])
+  const [interviews, setInterviews] = useState([])
+  const [completedInterviews, setCompletedInterviews] = useState([])
+  const [activeInterviews, setActiveInterviews] = useState([])
 
-    useEffect(()=>{
-      async function getUserInterviews(){
-        let user = JSON.parse(localStorage.getItem('user'))
-        let response = await fetch(`http://localhost:3001/api/interview/interviews/${user.email}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        response = await response.json()
-        let myInterviews;
-        if (user.role == 'candidate') {
-          myInterviews = response?.interviews?.filter(
-            interview => interview.candidateEmail === user.email
-          );
-          console.log("myInterviews" , myInterviews)
-        } else {
-          myInterviews = response?.interviews?.filter(
-            interview => interview.interviewerEmail == "dev.chawla2608@gmail.com"
-          );
-          console.log("myInterviews" , myInterviews , user.email)
+  useEffect(() => {
+    async function getUserInterviews() {
+      let user = JSON.parse(localStorage.getItem('user'))
+      let response = await fetch(`http://localhost:3001/api/interview/interviews/${user.email}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      response = await response.json()
+      let myInterviews;
+      if (user.role == 'candidate') {
+        myInterviews = response?.interviews?.filter(
+          interview => interview.candidateEmail === user.email
+        );
+        console.log("myInterviews", myInterviews)
+      } else {
+        myInterviews = response?.interviews?.filter(
+          interview => interview.interviewerEmail == "dev.chawla2608@gmail.com"
+        );
+        console.log("myInterviews", myInterviews, user.email)
 
-        }
-        setInterviews(myInterviews)
-        const mycompletedInterviews = myInterviews?.filter(
-          interview => interview.completed == true
-        );
-        const myActiveInterviews = myInterviews?.filter(
-          interview => interview.completed != true
-        );
-        setCompletedInterviews(mycompletedInterviews)
-        setActiveInterviews(myActiveInterviews)
       }
+      setInterviews(myInterviews)
+      const mycompletedInterviews = myInterviews?.filter(
+        interview => interview.completed == true
+      );
+      const myActiveInterviews = myInterviews?.filter(
+        interview => interview.completed != true
+      );
+      setCompletedInterviews(mycompletedInterviews)
+      setActiveInterviews(myActiveInterviews)
+    }
     getUserInterviews()
-    },[])
+  }, [])
 
   const renderContent = () => {
     switch (user && user.role) {
       case 'candidate':
         switch (activeItem) {
           case 'dashboard':
-            return <CandidateDashboard 
-            setActiveItem={setActiveItem} 
-            interviews={interviews}
-            setInterviews={setInterviews}
-            activeInterviews={activeInterviews}
-            setActiveInterviews={setActiveInterviews}
-            completedInterviews={completedInterviews}
-            setCompletedInterviews={setCompletedInterviews}
+            return <CandidateDashboard
+              setActiveItem={setActiveItem}
+              interviews={interviews}
+              setInterviews={setInterviews}
+              activeInterviews={activeInterviews}
+              setActiveInterviews={setActiveInterviews}
+              completedInterviews={completedInterviews}
+              setCompletedInterviews={setCompletedInterviews}
             />;
           case 'book-interview':
             return <BookingFlow />;
           case 'interviews':
-            return <InterviewManagement 
-                setActiveItem={setActiveItem} 
-                interviews={interviews}
-                setInterviews={setInterviews}
-                activeInterviews={activeInterviews}
-                setActiveInterviews={setActiveInterviews}
-                completedInterviews={completedInterviews}
-                setCompletedInterviews={setCompletedInterviews}
+            return <InterviewManagement
+              setActiveItem={setActiveItem}
+              interviews={interviews}
+              setInterviews={setInterviews}
+              activeInterviews={activeInterviews}
+              setActiveInterviews={setActiveInterviews}
+              completedInterviews={completedInterviews}
+              setCompletedInterviews={setCompletedInterviews}
             />;
           case 'feedback':
             return <FeedbackReviews />;
@@ -101,15 +102,25 @@ function Dashboard() {
         }
       case 'interviewer':
         switch (activeItem) {
+          case 'not-approved-dashboard':
+            return <NotApprovedDashboard
+              setActiveItem={setActiveItem}
+              interviews={interviews}
+              setInterviews={setInterviews}
+              activeInterviews={activeInterviews}
+              setActiveInterviews={setActiveInterviews}
+              completedInterviews={completedInterviews}
+              setCompletedInterviews={setCompletedInterviews}
+            />;
           case 'dashboard':
             return <InterviewerDashboard
-            setActiveItem={setActiveItem} 
-            interviews={interviews}
-            setInterviews={setInterviews}
-            activeInterviews={activeInterviews}
-            setActiveInterviews={setActiveInterviews}
-            completedInterviews={completedInterviews}
-            setCompletedInterviews={setCompletedInterviews}
+              setActiveItem={setActiveItem}
+              interviews={interviews}
+              setInterviews={setInterviews}
+              activeInterviews={activeInterviews}
+              setActiveInterviews={setActiveInterviews}
+              completedInterviews={completedInterviews}
+              setCompletedInterviews={setCompletedInterviews}
             />;
           case 'calendar':
             return <CalendarAvailability />;

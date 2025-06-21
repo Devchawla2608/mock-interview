@@ -63,7 +63,10 @@ exports.login = async (req, res) => {
 };
 
 
+
+
 exports.updateProfile = async (req, res) => {
+    console.log('Update User Request Body:', req.body);
   const {
     email,
     phoneNumber,
@@ -81,9 +84,6 @@ exports.updateProfile = async (req, res) => {
     leetcode,
     github
   } = req.body;
-
-  console.log('Update User Request Body:', req.body);
-
   try {
     const user = await User.findOne({ email }); 
     if (!user) {
@@ -96,28 +96,55 @@ exports.updateProfile = async (req, res) => {
     if (name) user.name = name;
     if (phoneNumber) user.phoneNumber = phoneNumber;
     if (profileCompletion) user.profileCompletion = profileCompletion;
-
     if (user.role === 'candidate') {
-      const currentCandidateInfo = user.candidateProfileInformation || {};
-      const currentCodingProfiles = currentCandidateInfo.codingProfiles || {};
+        const currentCandidateInfo = user.candidateProfileInformation || {};
+        const currentCodingProfiles = currentCandidateInfo.codingProfiles || {};
 
-      user.candidateProfileInformation = {
-        ...currentCandidateInfo,
-        bio: bio ?? currentCandidateInfo.bio,
-        location: location ?? currentCandidateInfo.location,
-        currentCompany: currentCompany ?? currentCandidateInfo.currentCompany,
-        currentRole: currentRole ?? currentCandidateInfo.currentRole,
-        experience: experience ?? currentCandidateInfo.experience,
-        skills: skills ?? currentCandidateInfo.skills,
-        codingProfiles: {
-          ...currentCodingProfiles,
-          codeforces: codeforces ?? currentCodingProfiles.codeforces,
-          codechef: codechef ?? currentCodingProfiles.codechef,
-          linkedin: linkedin ?? currentCodingProfiles.linkedin,
-          leetcode: leetcode ?? currentCodingProfiles.leetcode,
-          github: github ?? currentCodingProfiles.github,
-        }
-      };
+        user.candidateProfileInformation = {
+          ...currentCandidateInfo,
+          bio: bio ?? currentCandidateInfo.bio,
+          location: location ?? currentCandidateInfo.location,
+          currentCompany: currentCompany ?? currentCandidateInfo.currentCompany,
+          currentRole: currentRole ?? currentCandidateInfo.currentRole,
+          experience: experience ?? currentCandidateInfo.experience,
+          skills: skills ?? currentCandidateInfo.skills,
+          codingProfiles: {
+            ...currentCodingProfiles,
+            codeforces: codeforces ?? currentCodingProfiles.codeforces,
+            codechef: codechef ?? currentCodingProfiles.codechef,
+            linkedin: linkedin ?? currentCodingProfiles.linkedin,
+            leetcode: leetcode ?? currentCodingProfiles.leetcode,
+            github: github ?? currentCodingProfiles.github,
+          }
+        };
+    }else if (user.role === 'interviewer') {
+        const { interviewerRole, category, reviewCount, totalEarnings, isApproved, slots } = req.body;
+        if (category) user.category = category;
+        if (interviewerRole) user.interviewerRole = interviewerRole;
+        if (reviewCount) user.reviewCount = reviewCount;
+        if (totalEarnings) user.totalEarnings = totalEarnings;
+        if (slots) user.slots = slots;
+
+        const currentInterviewerInfo = user.interviewerProfileInformation || {};
+        const currentCodingProfiles = currentInterviewerInfo.codingProfiles || {};
+
+        user.interviewerProfileInformation = {
+          ...currentInterviewerInfo,
+          bio: bio ?? currentInterviewerInfo.bio,
+          location: location ?? currentInterviewerInfo.location,
+          currentCompany: currentCompany ?? currentInterviewerInfo.currentCompany,
+          currentRole: currentRole ?? currentInterviewerInfo.currentRole,
+          experience: experience ?? currentInterviewerInfo.experience,
+          skills: skills ?? currentInterviewerInfo.skills,
+          codingProfiles: {
+            ...currentCodingProfiles,
+            codeforces: codeforces ?? currentCodingProfiles.codeforces,
+            codechef: codechef ?? currentCodingProfiles.codechef,
+            linkedin: linkedin ?? currentCodingProfiles.linkedin,
+            leetcode: leetcode ?? currentCodingProfiles.leetcode,
+            github: github ?? currentCodingProfiles.github,
+          }
+        };
     }
     const updatedUser = await user.save();
 

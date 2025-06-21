@@ -6,6 +6,7 @@ const baseUserSchema = new mongoose.Schema({
   name: { type: String, required: true, trim: true },
   email: { type: String, required: true, unique: true, trim: true },
   password: { type: String, required: true },
+  role: { type: String, required: true },
   phoneNumber: { type: String },
   profileCompletion: { type: String , default: '0' },
 }, options);
@@ -36,24 +37,23 @@ const interviewerSchema = new mongoose.Schema({
     bio: { type: String },
     experience: { type: String },
     skills: [String],
-    expertise: [String],
-    languages: [String],
+    currentCompany: { type: String },
+    currentRole: { type: String },
+    location: { type: String },
     codingProfiles: {
       codeforces: { type: String },
+      codechef: { type: String },
+      linkedin: { type: String },
       leetcode: { type: String },
       github: { type: String }
     }
   },
+  interviewerRole: { type: String},
   category: { type: String },
   reviewCount: { type: String },
   totalEarnings: { type: String },
   isApproved: { type: Boolean, default: false },
   slots: [String],
-  approvalProcess: {
-    status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
-    approvedBy: { type: String },
-    approvedAt: { type: Date }
-  }
 });
 const Interviewer = User.discriminator('interviewer', interviewerSchema);
 

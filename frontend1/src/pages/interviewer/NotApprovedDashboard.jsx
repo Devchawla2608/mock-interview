@@ -6,7 +6,7 @@ import { useAuth } from '../../components/contexts/AuthContext';
 import { sampleInterviews, companies } from '../../components/data/sampleData';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-function CandidateDashboard({setActiveItem , interviews , setInterviews , activeInterviews , setActiveInterviews , completedInterviews , setCompletedInterviews}) {
+function NotApprovedDashboard({setActiveItem , interviews , setInterviews , activeInterviews , setActiveInterviews , completedInterviews , setCompletedInterviews}) {
   const { user } = useAuth();
   const candidate = user;
   const [averageRating , setAverageRating] = useState('')
@@ -58,7 +58,7 @@ function generatePerformanceDataByDate(interviews) {
 
   useEffect(()=>{
     async function getUserInterviewsDetails(){
-      const totalRating = completedInterviews.reduce(
+      const totalRating = completedInterviews?.reduce(
         (sum, interview) => sum + (parseInt(interview.candidateRating) || 0),
         0
       );
@@ -200,6 +200,36 @@ function generatePerformanceDataByDate(interviews) {
             </Card>
           )}
 
+          {/* Performance Chart */}
+          <Card>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">Performance Trends</h2>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={performanceData}>
+                  <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                  <XAxis dataKey="month" className="text-xs" />
+                  <YAxis className="text-xs" />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                    }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="score"
+                    stroke="#3b82f6"
+                    strokeWidth={3}
+                    dot={{ fill: '#3b82f6', strokeWidth: 2, r: 6 }}
+                    activeDot={{ r: 8, stroke: '#3b82f6', strokeWidth: 2 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </Card>
+
           {/* Recent Interviews */}
 <Card>
   <div className="flex items-center justify-between mb-6">
@@ -273,82 +303,35 @@ function generatePerformanceDataByDate(interviews) {
             </div>
           </Card>
 
-        </div>
-      </div>
-        <div className="lg:col-span-2 space-y-6">
-          {/* Next Interview */}
-          {activeInterviews?.length != 0 && (
-            <Card>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Requested Interview</h2>
-                <span className="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full text-sm font-medium">
-                  Confirmed
-                </span>
-              </div>
-<div className="space-y-6">
-  {activeInterviews?.map((interview) => {
-
-    return (
-      <div
-        key={interview._id}
-        className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-6"
-      >
-        <div className="flex items-start justify-between">
-          <div className="flex items-center space-x-4">
-            <img
-              src={companyLogo}
-              alt="Company"
-              className="w-12 h-12 rounded-lg object-cover"
-            />
-            <div>
-              <h3 className="font-semibold text-gray-900 dark:text-white">
-                {interview?.companyName || "Unknown Company"} Interview
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Category {interview.category}
-              </p>
-              <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500 dark:text-gray-400">
-<div className="flex items-center space-x-1">
-  <Calendar className="w-4 h-4" />
-  <span className="font-medium">
-    {new Date(interview.selectedDate).toLocaleDateString(undefined, {
-      weekday: 'short',
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    })}
-  </span>
-</div>
-<div className="flex items-center space-x-1">
-  <Clock className="w-4 h-4" />
-  <span className="font-medium">
-    {interview.startTime
-      ? new Date(`1970-01-01T${interview.startTime}`).toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit',
-        })
-      : ''}
-  </span>
-</div>
-              </div>
+          {/* Skills Progress */}
+          <Card>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Skills Progress</h2>
+            <div className="space-y-4">
+              {[
+                { skill: 'Data Structures', progress: 85, color: 'bg-blue-500' },
+                { skill: 'Algorithms', progress: 78, color: 'bg-green-500' },
+                { skill: 'System Design', progress: 65, color: 'bg-yellow-500' },
+                { skill: 'Communication', progress: 90, color: 'bg-purple-500' }
+              ].map((item) => (
+                <div key={item.skill}>
+                  <div className="flex justify-between text-sm mb-1">
+                    <span className="text-gray-700 dark:text-gray-300">{item.skill}</span>
+                    <span className="text-gray-500 dark:text-gray-400">{item.progress}%</span>
+                  </div>
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div
+                      className={`${item.color} h-2 rounded-full transition-all duration-500`}
+                      style={{ width: `${item.progress}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
             </div>
-          </div>
-          <Button size="sm">
-            Join Interview
-            <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
+          </Card>  
         </div>
       </div>
-    );
-  })}
-</div>
-            </Card>
-          )}
-        </div>
     </div>
   );
 }
 
-export default CandidateDashboard;
-
-
+export default NotApprovedDashboard;

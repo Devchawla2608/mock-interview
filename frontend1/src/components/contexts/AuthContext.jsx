@@ -52,31 +52,50 @@ function AuthProvider({ children }) {
 
   const updateProfile = async (formData) =>{
     setIsLoading(true);
-    
-    // Here you would typically send the updated user data to your backend API
+    console.log("Form Data: ", formData);
+
     let userData; 
     if(formData?.role == 'candidate'){
       userData = {  
         name: formData.name,
+        email: formData.email,
         phoneNumber: formData.phone,
         location: formData.location,
+        profileCompletion: formData.profileCompletion,
         bio: formData.bio,
-        company: formData.company,
-        currentRole: formData.currentRole,
         experience: formData.experience,
         skills: formData.skills,
-        linkedin: formData.linkedin,
-        github: formData.github,
         codeForces: formData.codeForces,
         codeChef: formData.codeChef,
+        github: formData.github,
+        linkedin: formData.linkedin,
         leetcode: formData.leetcode,
-        profileCompletion: '100',
+        location: formData.location,
         currentRole: formData.currentRole,
-        currentCompany: formData.company,
+        currentCompany: formData.currentCompany,
+      }
+    }else if(formData?.role == 'interviewer'){
+      userData = {
+        name: formData.name,
+        email: formData.email,
+        role: formData.role,
+        phoneNumber: formData.phoneNumber,
+        profileCompletion: formData.profileCompletion,
+        bio: formData.bio,
         experience: formData.experience,
+        skills: formData.skills,
+        codeforces: formData.codeforces,
+        codechef: formData.codechef,
+        linkedin: formData.linkedin,
+        leetcode: formData.leetcode,
+        github: formData.github,
+        interviewerRole: formData.interviewerRole,
+        category: formData.categories[0],
+        location: formData.location,
+        currentRole: formData.currentRole,
+        currentCompany: formData.currentCompany,
       }
     }
-    // Simulate API call
     let response = await fetch('http://localhost:3001/api/auth/update-profile', {
       method: 'POST',
       headers: {

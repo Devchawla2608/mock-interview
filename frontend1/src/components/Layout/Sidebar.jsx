@@ -31,8 +31,9 @@ function Sidebar({ activeItem, onItemClick }) {
         ];
       case 'interviewer':
         return [
-          { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-          { id: 'calendar', label: 'Calendar & Availability', icon: Calendar },
+          { id: 'not-approved-dashboard', label: 'Dashboard', icon: LayoutDashboard },
+          // { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+          // { id: 'calendar', label: 'Calendar & Availability', icon: Calendar },
           // { id: 'interviews', label: 'Interview Requests', icon: BookOpen },
           // { id: 'earnings', label: 'Earnings', icon: TrendingUp },
           // { id: 'feedback', label: 'Reviews', icon: Star },

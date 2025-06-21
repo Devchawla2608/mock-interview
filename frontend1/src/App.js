@@ -20,8 +20,8 @@ const AppContent = () => {
     );
   }
 
-  const needsProfileCompletion = user && user.profileCompletion < "80";
-
+  const needsProfileCompletion = user && parseInt(user.profileCompletion) < 80;
+  console.log("User Profile Completion Status:", needsProfileCompletion);
   return (
     <Router>
       <Routes>
