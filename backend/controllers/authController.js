@@ -1,6 +1,8 @@
 const {User} = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const {interviews} = require('../data/interviews');
+const {bookInterviewForInterviewer} = require('./interviewController');
 
 exports.register = async (req, res) => {
   const { name, email, phone, password, confirmPassword, role } = req.body;
@@ -149,6 +151,13 @@ exports.updateProfile = async (req, res) => {
     const updatedUser = await user.save();
 
     console.log('Updated User:', updatedUser);
+    // If the user is a candidate, initialize their interview rounds
+    const interviewProcessStatus = bookInterviewForInterviewer(updatedUser?.category, updatedUser?.email, updatedUser?.interviewerRole)
+    if(interviewProcessStatus) {
+    res.status(200).json({ message: 'User updated successfully and interview process initialized but payment is remaining', user: updatedUser });
+    }else{
+      return res.status(400).json({ message: 'User is updated but Failed to initialize interview rounds' });
+    }
     res.status(200).json({ message: 'User updated successfully', user: updatedUser });
 
   } catch (err) {
@@ -156,3 +165,4 @@ exports.updateProfile = async (req, res) => {
     res.status(500).json({ message: 'Internal server error', error: err.message });
   }
 };
+

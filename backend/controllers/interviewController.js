@@ -1,5 +1,6 @@
 const Interview = require('../models/Interview');
 const mongoose = require('mongoose');
+const {categoryDetails} = require('../data/interviews');
 
 exports.bookInterview = async (req, res) => {
   try {
@@ -59,3 +60,32 @@ exports.getUserInterviews = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// bookInterview function 
+const bookInterviewForInterviewer = async (category , candidateEmail, interviewerRole ) => {
+  try {
+    if (!categoryDetails[category]) {   
+      console.error('Invalid category:', category);
+      return false;
+    }
+    let futureInterviews = categoryDetails[category].rounds[interviewerRole];
+    let price = categoryDetails[category].price;
+    let companyName;
+    if (category == 'A') {
+      companyName = 'Category A Company'; // Replace with actual company name logic
+    }
+    for (let i = 0; i < futureInterviews.length; i++) {
+    let newInterview = await Interview.create({
+      interviewRoundName: futureInterviews[i].round,
+      category,
+      companyName: companyName,
+      candidateEmail,
+      price: price,
+    });
+    }
+    return true;
+  } catch (err) {
+    console.error('Error booking interview:', err);
+    return false;
+  }
+}
