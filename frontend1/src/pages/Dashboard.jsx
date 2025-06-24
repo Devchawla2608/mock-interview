@@ -28,6 +28,7 @@ function Dashboard() {
   const [interviews, setInterviews] = useState([])
   const [completedInterviews, setCompletedInterviews] = useState([])
   const [activeInterviews, setActiveInterviews] = useState([])
+  const [requestedInterviews , setRequestedInterviews] = useState([])
 
   useEffect(() => {
     async function getUserInterviews() {
@@ -40,11 +41,10 @@ function Dashboard() {
       });
       response = await response.json()
       let myInterviews;
-      if (user.role == 'candidate') {
+      if (user.role == 'candidate' || (user.isApproved == false &&  user.role == 'interviewer')) {
         myInterviews = response?.interviews?.filter(
           interview => interview.candidateEmail === user.email
         );
-        console.log("myInterviews", myInterviews)
       } else {
         myInterviews = response?.interviews?.filter(
           interview => interview.interviewerEmail == "dev.chawla2608@gmail.com"
@@ -57,15 +57,20 @@ function Dashboard() {
         interview => interview.completed == true
       );
       const myActiveInterviews = myInterviews?.filter(
-        interview => interview.completed != true
+        interview => interview.completed !== true && interview.status === "active"
+      );
+      const myRequestedInterviews = myInterviews?.filter(
+        interview => interview.completed !== true && interview.status === "requested"
       );
       setCompletedInterviews(mycompletedInterviews)
       setActiveInterviews(myActiveInterviews)
+      setRequestedInterviews(myRequestedInterviews)
     }
     getUserInterviews()
   }, [])
 
   const renderContent = () => {
+    console.log("user" , user)
     switch (user && user.role) {
       case 'candidate':
         switch (activeItem) {
@@ -78,6 +83,8 @@ function Dashboard() {
               setActiveInterviews={setActiveInterviews}
               completedInterviews={completedInterviews}
               setCompletedInterviews={setCompletedInterviews}
+              requestedInterviews={requestedInterviews}
+              setRequestedInterviews={setRequestedInterviews}
             />;
           case 'book-interview':
             return <BookingFlow />;
@@ -90,6 +97,8 @@ function Dashboard() {
               setActiveInterviews={setActiveInterviews}
               completedInterviews={completedInterviews}
               setCompletedInterviews={setCompletedInterviews}
+              requestedInterviews={requestedInterviews}
+              setRequestedInterviews={setRequestedInterviews}
             />;
           case 'feedback':
             return <FeedbackReviews />;
@@ -102,8 +111,9 @@ function Dashboard() {
         }
       case 'interviewer':
         switch (activeItem) {
-          case 'not-approved-dashboard':
-            return <NotApprovedDashboard
+            case 'dashboard':
+            return user?.isApproved ? (
+              <InterviewerDashboard
               setActiveItem={setActiveItem}
               interviews={interviews}
               setInterviews={setInterviews}
@@ -111,9 +121,11 @@ function Dashboard() {
               setActiveInterviews={setActiveInterviews}
               completedInterviews={completedInterviews}
               setCompletedInterviews={setCompletedInterviews}
-            />;
-          case 'dashboard':
-            return <InterviewerDashboard
+              requestedInterviews={requestedInterviews}
+              setRequestedInterviews={setRequestedInterviews}
+              />
+            ) : (
+              <NotApprovedDashboard
               setActiveItem={setActiveItem}
               interviews={interviews}
               setInterviews={setInterviews}
@@ -121,17 +133,30 @@ function Dashboard() {
               setActiveInterviews={setActiveInterviews}
               completedInterviews={completedInterviews}
               setCompletedInterviews={setCompletedInterviews}
-            />;
-          case 'calendar':
-            return <CalendarAvailability />;
-          case 'interviews':
-            return <InterviewRequests />;
-          case 'earnings':
-            return <EarningsDashboard />;
-          case 'feedback':
-            return <InterviewerReviews />;
-          case 'profile':
-            return <ProfileSettings />;
+              requestedInterviews={requestedInterviews}
+              setRequestedInterviews={setRequestedInterviews}
+              />
+            );
+          // case 'calendar':
+          //   return <CalendarAvailability />;
+          // case 'interviews':
+          //   return <InterviewRequests 
+          //     setActiveItem={setActiveItem}
+          //     interviews={interviews}
+          //     setInterviews={setInterviews}
+          //     activeInterviews={activeInterviews}
+          //     setActiveInterviews={setActiveInterviews}
+          //     completedInterviews={completedInterviews}
+          //     setCompletedInterviews={setCompletedInterviews}
+          //     requestedInterviews={requestedInterviews}
+          //     setRequestedInterviews={setRequestedInterviews}
+          //   />;
+          // case 'earnings':
+          //   return <EarningsDashboard />;
+          // case 'feedback':
+          //   return <InterviewerReviews />;
+          // case 'profile':
+          //   return <ProfileSettings />;
           default:
             return <InterviewerDashboard />;
         }

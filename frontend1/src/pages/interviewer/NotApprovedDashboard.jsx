@@ -4,9 +4,12 @@ import Card from '../../components/UI/Card';
 import Button from '../../components/UI/Button';
 import { useAuth } from '../../components/contexts/AuthContext';
 import { sampleInterviews, companies } from '../../components/data/sampleData';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
+import { Tooltip } from 'react-tooltip'
+import 'react-tooltip/dist/react-tooltip.css'
 
-function NotApprovedDashboard({setActiveItem , interviews , setInterviews , activeInterviews , setActiveInterviews , completedInterviews , setCompletedInterviews}) {
+
+function NotApprovedDashboard({setActiveItem , interviews , setInterviews , activeInterviews , setActiveInterviews , completedInterviews , setCompletedInterviews, requestedInterviews , setRequestedInterviews}) {
   const { user } = useAuth();
   const candidate = user;
   const [averageRating , setAverageRating] = useState('')
@@ -17,10 +20,13 @@ function NotApprovedDashboard({setActiveItem , interviews , setInterviews , acti
 function calculateImprovementPercentage(interviews) {
   if (!Array.isArray(interviews)) return null;
 
+
   // Filter completed interviews
   const completedInterviews = interviews.filter(
     interview => interview.completed === true
   );
+
+
 
   // Extract and parse candidate ratings
   const ratings = completedInterviews?.map(interview => parseFloat(interview.candidateRating))
@@ -38,6 +44,14 @@ function calculateImprovementPercentage(interviews) {
   setImprovement(parseFloat(improvement.toFixed(2)))
 }
 
+    useEffect(() => {
+      function logging(){
+        console.log("interviews", interviews);
+        console.log("completedInterviews", completedInterviews);
+        console.log("activeInterviews", activeInterviews);
+      }   
+      logging()
+  }, []);
 function generatePerformanceDataByDate(interviews) {
   if (!Array.isArray(interviews)) return [];
 
@@ -100,7 +114,7 @@ function generatePerformanceDataByDate(interviews) {
         </div>
       </div>
 
-      {/* Quick Stats */}
+      {/* Quick Stats
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="text-center" hover>
           <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mx-auto mb-3">
@@ -125,7 +139,7 @@ function generatePerformanceDataByDate(interviews) {
           <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{improvement}%</h3>
           <p className="text-gray-600 dark:text-gray-400">Improvement</p>
         </Card>
-      </div>
+      </div> */}
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -201,7 +215,7 @@ function generatePerformanceDataByDate(interviews) {
           )}
 
           {/* Performance Chart */}
-          <Card>
+          {/* <Card>
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">Performance Trends</h2>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
@@ -228,65 +242,169 @@ function generatePerformanceDataByDate(interviews) {
                 </LineChart>
               </ResponsiveContainer>
             </div>
-          </Card>
+          </Card> */}
 
           {/* Recent Interviews */}
-<Card>
-  <div className="flex items-center justify-between mb-6">
-    <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Completed Interviews</h2>
-    <Button variant="ghost" size="sm">
-      View All
-      <ArrowRight className="w-4 h-4 ml-2" />
-    </Button>
-  </div>
-
-  {/* Scrollable container with custom scrollbar */}
-  <div className="space-y-4 max-h-[280px] overflow-y-auto pr-2 custom-scrollbar">
-    {completedInterviews?.map((interview) => {
-      const formattedDate = interview.selectedDate
-        ? new Date(interview?.selectedDate).toLocaleDateString(undefined, {
-            weekday: 'short',
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-          })
-        : '';
-      return (
-        <div
-          key={interview._id}
-          className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
-        >
-          <div className="flex items-center space-x-4">
-            <img
-              src={companyLogo}
-              alt={interview?.companyName}
-              className="w-10 h-10 rounded-lg object-cover"
-            />
-            <div>
-              <h3 className="font-medium text-gray-900 dark:text-white">
-                {interview?.companyName || "Unknown Company"}
-              </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{formattedDate}</p>
+          <Card>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Completed Interviews</h2>
+              <Button variant="ghost" size="sm">
+                View All
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
             </div>
-          </div>
-          <div className="flex items-center space-x-3">
-            <div className="flex items-center space-x-1">
-              <Star className="w-4 h-4 text-yellow-400" />
-              <span className="text-sm font-medium text-gray-900 dark:text-white">
-                {interview?.candidateRating || 0}
-              </span>
+
+            {/* Scrollable container with custom scrollbar */}
+            <div className="space-y-4 max-h-[280px] overflow-y-auto pr-2 custom-scrollbar">
+              {completedInterviews?.map((interview) => {
+                const formattedDate = interview.selectedDate
+                  ? new Date(interview?.selectedDate).toLocaleDateString(undefined, {
+                      weekday: 'short',
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                    })
+                  : '';
+                return (
+                  <div
+                    key={interview._id}
+                    className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                  >
+                    <div className="flex items-center space-x-4">
+                      <img
+                        src={companyLogo}
+                        alt={interview?.companyName}
+                        className="w-10 h-10 rounded-lg object-cover"
+                      />
+                      <div>
+                        <h3 className="font-medium text-gray-900 dark:text-white">
+                          {interview?.companyName || "Unknown Company"}
+                        </h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{formattedDate}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <div className="flex items-center space-x-1">
+                        <Star className="w-4 h-4 text-yellow-400" />
+                        <span className="text-sm font-medium text-gray-900 dark:text-white">
+                          {interview?.candidateRating || 0}
+                        </span>
+                      </div>
+                      <span className="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded text-xs font-medium">
+                        Completed
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-            <span className="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded text-xs font-medium">
-              Completed
-            </span>
-          </div>
-        </div>
-      );
-    })}
-  </div>
-</Card>
+          </Card>
+
+          <Card>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Upcoming  Interviews</h2>
+              <Button variant="ghost" size="sm">
+                View All
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </div>
+
+            {/* Scrollable container with custom scrollbar */}
+            <div className="space-y-4 max-h-[280px] overflow-y-auto pr-2 custom-scrollbar">
+              {activeInterviews?.map((interview) => {
+                const formattedDate = interview.selectedDate
+                  ? new Date(interview?.selectedDate).toLocaleDateString(undefined, {
+                      weekday: 'short',
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                    })
+                  : '';
+                return (
+                  <div
+                    key={interview._id}
+                    className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                  >
+                    <div className="flex items-center space-x-4">
+                      <img
+                        src={companyLogo}
+                        alt={interview?.companyName}
+                        className="w-10 h-10 rounded-lg object-cover"
+                      />
+                      <div>
+                        <h3 className="font-medium text-gray-900 dark:text-white">
+                          {interview?.companyName || "Unknown Company"}
+                        </h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{formattedDate}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <div className="flex items-center space-x-1">
+                        <Star className="w-4 h-4 text-yellow-400" />
+                        <span className="text-sm font-medium text-gray-900 dark:text-white">
+                          {interview?.candidateRating || 0}
+                        </span>
+                      </div>
+                      <span className="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded text-xs font-medium">
+                        Completed
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </Card>
 
 
+          <Card>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Requested  Interviews</h2>
+              <Button variant="ghost" size="sm">
+                View All
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </div>
+
+            {/* Scrollable container with custom scrollbar */}
+            <div className="space-y-4 max-h-[280px] overflow-y-auto pr-2 custom-scrollbar">
+              {requestedInterviews?.map((interview) => {
+                const formattedDate = interview.selectedDate
+                  ? new Date(interview?.selectedDate).toLocaleDateString(undefined, {
+                      weekday: 'short',
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                    })
+                  : '';
+                return (
+                  <div
+                  key={interview._id}
+                  className="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg"
+                  >
+                  <div className="flex items-center space-x-4">
+                    <img
+                    src={companyLogo}
+                    alt={interview?.companyName}
+                    className="w-10 h-10 rounded-lg object-cover"
+                    />
+                    <div>
+                    <h3 className="font-medium text-gray-900 dark:text-white">
+                      {interview?.companyName || "Unknown Company"}
+                    </h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{formattedDate}</p>
+                    </div>
+                  </div>
+                  <Tooltip id="my-tooltip" />
+                  <div className="flex items-center space-x-3 cursor-pointer" data-tooltip-id="my-tooltip" data-tooltip-content="No interviewer assigned yet">
+                    <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded text-xs font-medium">
+                    Requested
+                    </span>
+                  </div>
+                  </div>
+                );
+              })}
+            </div>
+          </Card>
 
         </div>
 
@@ -296,15 +414,15 @@ function generatePerformanceDataByDate(interviews) {
           <Card>
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h2>
             <div className="space-y-3">
-              <Button className="w-full justify-start" size="lg" onClick={()=>{setActiveItem('book-interview')}}>
+              <Button className="w-full justify-start" size="lg" onClick={()=>{setActiveItem('interviews')}}>
                 <Calendar className="w-5 h-5 mr-3"/>
-                Book New Interview
+                Check you schedule
               </Button>
             </div>
           </Card>
 
           {/* Skills Progress */}
-          <Card>
+          {/* <Card>
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Skills Progress</h2>
             <div className="space-y-4">
               {[
@@ -327,7 +445,7 @@ function generatePerformanceDataByDate(interviews) {
                 </div>
               ))}
             </div>
-          </Card>  
+          </Card>   */}
         </div>
       </div>
     </div>

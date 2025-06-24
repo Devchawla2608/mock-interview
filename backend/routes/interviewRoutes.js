@@ -6,5 +6,6 @@ const auth = require('../middleware/auth'); // path to your middleware
 
 router.post('/bookInterview',auth, interviewController.bookInterview);
 router.get('/interviews/:userId', interviewController.getUserInterviews);
+router.post('/getNewInterviewsForInterviewer' , interviewController.getNewInterviewsForInterviewer)
 
 module.exports = router;

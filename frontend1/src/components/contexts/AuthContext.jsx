@@ -44,7 +44,7 @@ function AuthProvider({ children }) {
     response = await response.json()
     localStorage.setItem("access_token" , response?.token)
     toast.success("Logged in succesfully")
-    setUser(userData);
+    setUser(response?.user);
     localStorage.setItem('user', JSON.stringify(response?.user));
     setIsLoading(false);
     return true;

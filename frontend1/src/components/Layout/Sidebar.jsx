@@ -17,7 +17,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 function Sidebar({ activeItem, onItemClick }) {
   const { user } = useAuth();
-
+  console.log("user"  , user)
   const getMenuItems = () => {
     switch (user?.role) {
       case 'candidate':
@@ -31,13 +31,12 @@ function Sidebar({ activeItem, onItemClick }) {
         ];
       case 'interviewer':
         return [
-          { id: 'not-approved-dashboard', label: 'Dashboard', icon: LayoutDashboard },
-          // { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-          // { id: 'calendar', label: 'Calendar & Availability', icon: Calendar },
+          { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
           // { id: 'interviews', label: 'Interview Requests', icon: BookOpen },
+          // { id: 'profile', label: 'Profile', icon: Settings },
+          // { id: 'calendar', label: 'Calendar & Availability', icon: Calendar },
           // { id: 'earnings', label: 'Earnings', icon: TrendingUp },
           // { id: 'feedback', label: 'Reviews', icon: Star },
-          { id: 'profile', label: 'Profile', icon: Settings },
         ];
       case 'admin':
         return [

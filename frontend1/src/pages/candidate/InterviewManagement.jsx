@@ -4,7 +4,7 @@ import Card from '../../components/UI/Card';
 import Button from '../../components/UI/Button';
 import { sampleInterviews, companies } from '../../components/data/sampleData';
 
-function InterviewManagement({setActiveItem , interviews , setInterviews , activeInterviews , setActiveInterviews , completedInterviews , setCompletedInterviews}) {
+function InterviewManagement({setActiveItem , interviews , setInterviews , activeInterviews , setActiveInterviews , completedInterviews , setCompletedInterviews , requestedInterviews , setRequestedInterviews}) {
   const [activeTab, setActiveTab] = useState('upcoming');
   const [searchQuery, setSearchQuery] = useState('');
 

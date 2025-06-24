@@ -62,7 +62,7 @@ exports.getUserInterviews = async (req, res) => {
 };
 
 // bookInterview function 
-const bookInterviewForInterviewer = async (category , candidateEmail, interviewerRole ) => {
+exports.bookInterviewForInterviewer = async (category , candidateEmail, interviewerRole ) => {
   try {
     if (!categoryDetails[category]) {   
       console.error('Invalid category:', category);
@@ -89,3 +89,23 @@ const bookInterviewForInterviewer = async (category , candidateEmail, interviewe
     return false;
   }
 }
+
+
+// Get new interviews for current interviewer in the same category with status 'requested'
+exports.getNewInterviewsForInterviewer = async (req, res) => {
+  try {
+    const {category} = req.body
+    const interviews = await Interview.find({
+      category: category,
+      status: 'requested'
+    }).sort({ createdAt: -1 });
+    res.status(200).json({
+      message: 'New interviews for interviewer',
+      interviews: interviews
+    });
+  } catch (err) {
+    console.error('Error fetching new interviews:', err);
+    res.status(500).json({ error: err.message });
+  }
+};
+

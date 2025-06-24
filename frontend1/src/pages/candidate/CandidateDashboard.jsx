@@ -4,9 +4,11 @@ import Card from '../../components/UI/Card';
 import Button from '../../components/UI/Button';
 import { useAuth } from '../../components/contexts/AuthContext';
 import { sampleInterviews, companies } from '../../components/data/sampleData';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
+import { Tooltip } from 'react-tooltip'
+import 'react-tooltip/dist/react-tooltip.css'
 
-function CandidateDashboard({setActiveItem , interviews , setInterviews , activeInterviews , setActiveInterviews , completedInterviews , setCompletedInterviews}) {
+function CandidateDashboard({setActiveItem , interviews , setInterviews , activeInterviews , setActiveInterviews , completedInterviews , setCompletedInterviews , requestedInterviews , setRequestedInterviews}) {
   const { user } = useAuth();
   const candidate = user;
   const [averageRating , setAverageRating] = useState('')
@@ -58,7 +60,7 @@ function generatePerformanceDataByDate(interviews) {
 
   useEffect(()=>{
     async function getUserInterviewsDetails(){
-      const totalRating = completedInterviews.reduce(
+      const totalRating = completedInterviews?.reduce(
         (sum, interview) => sum + (parseInt(interview.candidateRating) || 0),
         0
       );
@@ -277,7 +279,7 @@ function generatePerformanceDataByDate(interviews) {
       </div>
         <div className="lg:col-span-2 space-y-6">
           {/* Next Interview */}
-          {activeInterviews?.length != 0 && (
+          {requestedInterviews?.length != 0 && (
             <Card>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Requested Interview</h2>
@@ -286,7 +288,7 @@ function generatePerformanceDataByDate(interviews) {
                 </span>
               </div>
 <div className="space-y-6">
-  {activeInterviews?.map((interview) => {
+  {requestedInterviews?.map((interview) => {
 
     return (
       <div
@@ -333,10 +335,12 @@ function generatePerformanceDataByDate(interviews) {
               </div>
             </div>
           </div>
-          <Button size="sm">
-            Join Interview
-            <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
+                  <Tooltip id="my-tooltip" />
+                  <div className="flex items-center space-x-3 cursor-pointer" data-tooltip-id="my-tooltip" data-tooltip-content="No interviewer assigned yet">
+                    <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded text-xs font-medium">
+                    Requested
+                    </span>
+                  </div>
         </div>
       </div>
     );

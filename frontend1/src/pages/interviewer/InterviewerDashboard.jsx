@@ -1,14 +1,44 @@
 import React, { useEffect , useState } from 'react';
-import { DollarSign, Calendar, Star, TrendingUp, Users, Clock, Award, Target } from 'lucide-react';
+import { DollarSign, Calendar, Star, TrendingUp, Users, Clock, Award, Target , RefreshCcw} from 'lucide-react';
 import Card from '../../components/UI/Card';
 import Button from '../../components/UI/Button';
 import { useAuth } from '../../components/contexts/AuthContext';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 
-function InterviewerDashboard({setActiveItem , interviews , setInterviews , activeInterviews , setActiveInterviews , completedInterviews , setCompletedInterviews})  {
+function InterviewerDashboard({setActiveItem , interviews , setInterviews , activeInterviews , setActiveInterviews , completedInterviews , setCompletedInterviews , requestedInterviews , setRequestedInterviews})  {
   const { user } = useAuth();
   const [averageRating , setAverageRating] = useState('')
   const [growth , setGrowth] = useState('')
+  const [newInterviews, setNewInterviews] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetchInterviews = async () => {
+    try {
+      setLoading(true);
+      let userData = {
+        category: user?.category
+      }
+      let response = await fetch('http://localhost:3001/api/interview/getNewInterviewsForInterviewer', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    });
+      response = await response.json()
+      console.log("res" , response?.interviews)
+      setNewInterviews(response?.interviews);
+    } catch (error) {
+      console.error('Error fetching interviews:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchInterviews(); // initial fetch
+  }, []);
+
   function calculateGrowthPercentage(interviews) {
   if (!Array.isArray(interviews)) return null;
 
@@ -36,7 +66,7 @@ function InterviewerDashboard({setActiveItem , interviews , setInterviews , acti
 
     useEffect(()=>{
       async function getUserInterviewsDetails(){
-        const totalRating = completedInterviews.reduce(
+        const totalRating = completedInterviews?.reduce(
           (sum, interview) => sum + (parseInt(interview.interviewerRating) || 0),
           0
         );
@@ -195,11 +225,23 @@ function InterviewerDashboard({setActiveItem , interviews , setInterviews , acti
           {/* Pending Requests */}
 <Card>
   <div className="flex items-center justify-between mb-6">
-    <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Pending Interview Requests</h2>
+    <h2 className="text-xl font-semibold text-gray-900 dark:text-white">New Interview Requests</h2>
+  <div className="flex items-center gap-2">
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={fetchInterviews}
+      className="cursor-pointer"
+      disabled={loading}
+    >
+      <RefreshCcw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+    </Button>
     <Button variant="ghost" size="sm">View All</Button>
   </div>
+  </div>
+  <h1>Hey {newInterviews.length}</h1>
   <div className="space-y-4">
-    {activeInterviews
+    {newInterviews
       .map((interview, index) => {
         const candidateName = interview.candidateName;
         const category = interview.category || "-";
@@ -244,6 +286,66 @@ function InterviewerDashboard({setActiveItem , interviews , setInterviews , acti
       })}
   </div>
 </Card>
+
+
+
+
+<Card>
+<div className="flex items-center justify-between mb-6">
+  <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+    Pending Interview Requests
+  </h2>
+  <div className="flex items-center gap-2">
+    <Button variant="ghost" size="sm">View All</Button>
+  </div>
+</div>
+  <div className="space-y-4">
+    {requestedInterviews
+      .map((interview, index) => {
+        const candidateName = interview.candidateName;
+        const category = interview.category || "-";
+        const date = interview.selectedDate
+          ? new Date(interview.selectedDate).toLocaleDateString(undefined, {
+              month: 'short',
+              day: 'numeric',
+            })
+          : "";
+        const time = interview.startTime
+          ? new Date(`1970-01-01T${interview.startTime}`).toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+            })
+          : "";
+
+        return (
+          <div key={interview._id || index} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <div className="flex items-center space-x-4">
+              <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900 rounded-full flex items-center justify-center">
+                <Users className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+              </div>
+              <div>
+                <h3 className="font-medium text-gray-900 dark:text-white">{interview?.candidateEmail}</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {interview?.companyName} • Category {interview?.category}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-3">
+              <div className="text-right text-sm">
+                <p className="text-gray-900 dark:text-white font-medium">{date}</p>
+                <p className="text-gray-500 dark:text-gray-400">{time}</p>
+              </div>
+              <div className="flex space-x-2">
+                <Button size="sm" variant="outline">Decline</Button>
+                <Button size="sm">Accept</Button>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+  </div>
+</Card>
+
         </div>
 
         {/* Right Column */}
@@ -271,29 +373,28 @@ function InterviewerDashboard({setActiveItem , interviews , setInterviews , acti
           <Card>
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Your Categories</h2>
             <div className="space-y-3">
-              {interviewer?.categories?.map((category) => (
-                <div key={category} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+
+                <div key={interviewer?.category} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                   <div className="flex items-center space-x-3">
                     <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                      category === 'A' ? 'bg-red-100 dark:bg-red-900' :
-                      category === 'B' ? 'bg-blue-100 dark:bg-blue-900' :
+                      interviewer?.category === 'A' ? 'bg-red-100 dark:bg-red-900' :
+                      interviewer?.category === 'B' ? 'bg-blue-100 dark:bg-blue-900' :
                       'bg-green-100 dark:bg-green-900'
                     }`}>
                       <span className={`font-bold text-sm ${
-                        category === 'A' ? 'text-red-600 dark:text-red-400' :
-                        category === 'B' ? 'text-blue-600 dark:text-blue-400' :
+                        interviewer?.category === 'A' ? 'text-red-600 dark:text-red-400' :
+                        interviewer?.category === 'B' ? 'text-blue-600 dark:text-blue-400' :
                         'text-green-600 dark:text-green-400'
                       }`}>
-                        {category}
+                        {interviewer?.category}
                       </span>
                     </div>
-                    <span className="font-medium text-gray-900 dark:text-white">Category {category}</span>
+                    <span className="font-medium text-gray-900 dark:text-white">Category {interviewer?.category}</span>
                   </div>
                   <span className="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded text-xs font-medium">
                     Active
                   </span>
                 </div>
-              ))}
             </div>
           </Card>
 
