@@ -5,10 +5,9 @@ import Button from '../../components/UI/Button';
 import { sampleInterviews, companies } from '../../components/data/sampleData';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
 
-function FeedbackReviews() {
+function FeedbackReviews({setActiveItem , interviews , setInterviews , activeInterviews , setActiveInterviews , completedInterviews , setCompletedInterviews , requestedInterviews , setRequestedInterviews , approvedInterviews , setApprovedInterviews, forceRender , setForceRender}) {
   const [selectedPeriod, setSelectedPeriod] = useState('all');
 
-  const completedInterviews = sampleInterviews.filter(i => i.status === 'completed' && i.feedback);
   
   const averageRating = completedInterviews.reduce((sum, interview) => 
     sum + (interview.feedback?.rating || 0), 0) / completedInterviews?.length || 0;
@@ -198,7 +197,7 @@ function FeedbackReviews() {
                     <div>
                       <h3 className="font-semibold text-gray-900 dark:text-white">{company?.name}</h3>
                       <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {interview.scheduledDate.toLocaleDateString()}
+                        {interview.selectedDate ? new Date(interview?.selectedDate).toLocaleDateString() : ''}
                       </p>
                     </div>
                   </div>

@@ -6,6 +6,7 @@ exports.bookInterview = async (req, res) => {
   try {
     const {
       candidateEmail,
+      candidateName,
       companyId,
       category,
       price,
@@ -15,7 +16,6 @@ exports.bookInterview = async (req, res) => {
       selectedSlot,
       completed
     } = req.body;
-    console.log('Booking Request Body:', req.body);
     const userId = req.user._id;
 
 const newInterview = await Interview.create({
@@ -23,6 +23,7 @@ const newInterview = await Interview.create({
   interviewerId: interviewerId,
   companyId,
   companyName,
+  candidateName:candidateName,
   candidateEmail: candidateEmail,
   category,
   price,
@@ -44,25 +45,30 @@ const newInterview = await Interview.create({
     res.status(500).json({ error: err.message });
   }
 };
-
-
-
 exports.getUserInterviews = async (req, res) => {
   const userId = req.params.userId;
-  console.log('Fetching interviews for userId:', userId);
+  const role = req.params.role;
   try {
-    const interviews = await Interview.find({ candidateEmail: userId }).sort({ date: -1 });
+    let query = {};
+    if (role === 'candidate') {
+      query.candidateEmail = userId;
+    } else if (role === 'interviewer') {
+      query.interviewerEmail = userId;
+    } else {
+      return res.status(400).json({ error: 'Invalid role' });
+    }
+    const interviews = await Interview.find(query).sort({ createdAt: -1 });
     res.status(200).json({
       message: 'Interviews',
       interviews: interviews
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({'message' :'An error occurred while fetching user interviews.' });
   }
 };
 
 // bookInterview function 
-exports.bookInterviewForInterviewer = async (category , candidateEmail, interviewerRole ) => {
+exports.bookInterviewForInterviewer = async (category , candidateEmail, interviewerRole, candidateName ) => {
   try {
     if (!categoryDetails[category]) {   
       console.error('Invalid category:', category);
@@ -79,6 +85,7 @@ exports.bookInterviewForInterviewer = async (category , candidateEmail, intervie
       interviewRoundName: futureInterviews[i].round,
       category,
       companyName: companyName,
+      candidateName: candidateName,
       candidateEmail,
       price: price,
     });
@@ -105,6 +112,34 @@ exports.getNewInterviewsForInterviewer = async (req, res) => {
     });
   } catch (err) {
     console.error('Error fetching new interviews:', err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
+exports.acceptInterview = async (req, res) => {
+  try {
+    const { interviewId, interviewerEmail , interviewerName } = req.body;
+    if (!interviewId || !interviewerEmail || !interviewerName) {
+      return res.status(400).json({ error: 'interviewId, email and name are required' });
+    }
+
+    const interview = await Interview.findById(interviewId);
+    if (!interview) {
+      return res.status(404).json({ error: 'Interview not found' });
+    }
+
+    interview.interviewerEmail = interviewerEmail;
+    interview.interviewerName = interviewerName
+    interview.status = "approved"
+    await interview.save();
+
+    res.status(200).json({
+      message: 'Interview accepted and interviewer email updated',
+      interview
+    });
+  } catch (err) {
+    console.error('Error accepting interview:', err);
     res.status(500).json({ error: err.message });
   }
 };

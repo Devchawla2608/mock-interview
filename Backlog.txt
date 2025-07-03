@@ -1,0 +1,5 @@
+1. Sign In and Sign Up with google
+2. Remember Me
+3. Forgot Password
+4. Profile Setting
+5. Have to add company logos, interviererName and candidateName , duration, price

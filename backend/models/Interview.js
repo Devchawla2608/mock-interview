@@ -5,6 +5,8 @@ const interviewSchema = new mongoose.Schema({
   companyName: { type: String},
   category: { type: String, required: true },
   candidateEmail: { type: String, required: true }, // Assuming this is the userId of the candidate
+  candidateName: {type: String, required: true},
+  interviewerName: {type: String, required: true, default:"Deepanshu Chawla"},
   interviewerEmail: { type: String,required: true , default:"dev.chawla2608@gmail.com"}, // Assuming this is the userId of the interviewer
   price: { type: Number, required: true },
   selectedDate: { type: Date, required: true , default: Date.now }, // Default to current date

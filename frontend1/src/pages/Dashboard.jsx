@@ -29,11 +29,14 @@ function Dashboard() {
   const [completedInterviews, setCompletedInterviews] = useState([])
   const [activeInterviews, setActiveInterviews] = useState([])
   const [requestedInterviews , setRequestedInterviews] = useState([])
+  const [approvedInterviews , setApprovedInterviews] = useState([])
+  const [forceRender , setForceRender] = useState(false)
+  
 
   useEffect(() => {
     async function getUserInterviews() {
       let user = JSON.parse(localStorage.getItem('user'))
-      let response = await fetch(`http://localhost:3001/api/interview/interviews/${user.email}`, {
+      let response = await fetch(`http://localhost:3001/api/interview/interviews/${user?.email}/${user?.role}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -47,14 +50,16 @@ function Dashboard() {
         );
       } else {
         myInterviews = response?.interviews?.filter(
-          interview => interview.interviewerEmail == "dev.chawla2608@gmail.com"
+          interview => interview.interviewerEmail == user?.email
         );
-        console.log("myInterviews", myInterviews, user.email)
-
+        console.log("myInterviews" ,myInterviews)
       }
       setInterviews(myInterviews)
-      const mycompletedInterviews = myInterviews?.filter(
+        const mycompletedInterviews = myInterviews?.filter(
         interview => interview.completed == true
+      );
+      const myApprovedInterviews = myInterviews?.filter(
+        interview => interview.completed !== true && interview.status === "approved"
       );
       const myActiveInterviews = myInterviews?.filter(
         interview => interview.completed !== true && interview.status === "active"
@@ -62,15 +67,16 @@ function Dashboard() {
       const myRequestedInterviews = myInterviews?.filter(
         interview => interview.completed !== true && interview.status === "requested"
       );
+      console.log("mycompletedInterviews" , mycompletedInterviews , myActiveInterviews , myRequestedInterviews , myApprovedInterviews)
       setCompletedInterviews(mycompletedInterviews)
       setActiveInterviews(myActiveInterviews)
       setRequestedInterviews(myRequestedInterviews)
-    }
+      setApprovedInterviews(myApprovedInterviews)
+    } 
     getUserInterviews()
-  }, [])
+  }, [forceRender])
 
   const renderContent = () => {
-    console.log("user" , user)
     switch (user && user.role) {
       case 'candidate':
         switch (activeItem) {
@@ -85,6 +91,10 @@ function Dashboard() {
               setCompletedInterviews={setCompletedInterviews}
               requestedInterviews={requestedInterviews}
               setRequestedInterviews={setRequestedInterviews}
+              approvedInterviews={approvedInterviews}
+              setApprovedInterviews={setApprovedInterviews}
+              setForceRender={setForceRender}
+              forceRender={forceRender}
             />;
           case 'book-interview':
             return <BookingFlow />;
@@ -99,9 +109,27 @@ function Dashboard() {
               setCompletedInterviews={setCompletedInterviews}
               requestedInterviews={requestedInterviews}
               setRequestedInterviews={setRequestedInterviews}
+              approvedInterviews={approvedInterviews}
+              setApprovedInterviews={setApprovedInterviews}
+              setForceRender={setForceRender}
+              forceRender={forceRender}
             />;
           case 'feedback':
-            return <FeedbackReviews />;
+            return <FeedbackReviews
+                setActiveItem={setActiveItem}
+                interviews={interviews}
+                setInterviews={setInterviews}
+                activeInterviews={activeInterviews}
+                setActiveInterviews={setActiveInterviews}
+                completedInterviews={completedInterviews}
+                setCompletedInterviews={setCompletedInterviews}
+                requestedInterviews={requestedInterviews}
+                setRequestedInterviews={setRequestedInterviews}
+                approvedInterviews={approvedInterviews}
+                setApprovedInterviews={setApprovedInterviews}
+                setForceRender={setForceRender}
+                forceRender={forceRender}
+            />;
           case 'payments':
             return <PaymentHistory />;
           case 'profile':
@@ -123,6 +151,10 @@ function Dashboard() {
               setCompletedInterviews={setCompletedInterviews}
               requestedInterviews={requestedInterviews}
               setRequestedInterviews={setRequestedInterviews}
+              approvedInterviews={approvedInterviews}
+              setApprovedInterviews={setApprovedInterviews}
+              setForceRender={setForceRender}
+              forceRender={forceRender}
               />
             ) : (
               <NotApprovedDashboard
@@ -135,6 +167,10 @@ function Dashboard() {
               setCompletedInterviews={setCompletedInterviews}
               requestedInterviews={requestedInterviews}
               setRequestedInterviews={setRequestedInterviews}
+              approvedInterviews={approvedInterviews}
+              setApprovedInterviews={setApprovedInterviews}
+              setForceRender={setForceRender}
+              forceRender={forceRender}
               />
             );
           // case 'calendar':

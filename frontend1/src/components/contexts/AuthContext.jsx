@@ -26,28 +26,46 @@ function AuthProvider({ children }) {
   }, []);
 
   const login = async (userData) => {
-    setIsLoading(true);
-    
-    // Simulate API call
-    let response = await fetch('http://localhost:3001/api/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userData),
-    });
-    if(response.status != 200){
-      toast.error("Ops, We are facing some issues, please try again");
+    try{
+      const { email, password } = userData || {};
+      if (!email || !password) {
+        toast.error("Email and password are required");
+        return;
+      }
+      setIsLoading(true);
+      let response = await fetch('http://localhost:3001/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+      if(response?.status == 400){
+        toast.error("Email and password are required");
+        return;
+      }else if(response?.status == 401){
+        toast.error("Your email or password is wrong, please try again!")
+        return
+      }
+      else if(response?.status == 404){
+        toast.error("User does not exists, please register yourself first")
+        return
+      }
+      else if(response.status == 500){
+        toast.error("Ops, We are facing some issues, please try again");
+        return ;
+      }
+      response = await response.json()
+      toast.success("Logged in successfully. Welcome back!");
+      setUser(response?.user);
+      localStorage.setItem("access_token" , response?.token)
+      localStorage.setItem('user', JSON.stringify(response?.user));
       setIsLoading(false);
-      return false;
+      return true;
+    }catch(err){
+      toast.error("Ops, We are facing some issues, please try again");
+      return;
     }
-    response = await response.json()
-    localStorage.setItem("access_token" , response?.token)
-    toast.success("Logged in succesfully")
-    setUser(response?.user);
-    localStorage.setItem('user', JSON.stringify(response?.user));
-    setIsLoading(false);
-    return true;
   };
 
   const updateProfile = async (formData) =>{
@@ -59,7 +77,6 @@ function AuthProvider({ children }) {
       userData = {  
         name: formData.name,
         email: formData.email,
-        phoneNumber: formData.phone,
         location: formData.location,
         profileCompletion: formData.profileCompletion,
         bio: formData.bio,
@@ -79,7 +96,6 @@ function AuthProvider({ children }) {
         name: formData.name,
         email: formData.email,
         role: formData.role,
-        phoneNumber: formData.phoneNumber,
         profileCompletion: formData.profileCompletion,
         bio: formData.bio,
         experience: formData.experience,
@@ -120,7 +136,7 @@ function AuthProvider({ children }) {
   const register = async (userData) => {
     try{
     setIsLoading(true);
-    
+    console.log("userData" , userData)
     const response = await fetch('http://localhost:3001/api/auth/register', {
       method: 'POST',
       headers: {

@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
-import { Eye, EyeOff, Mail, Lock, Phone } from 'lucide-react';
+import{ useState } from 'react';
+import { Eye, EyeOff, Mail, Lock} from 'lucide-react';
 import Button from '../UI/Button';
 import { useAuth } from '../contexts/AuthContext';
+import { toast } from 'react-toastify';
 
 const LoginForm = ({ onToggleForm }) => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    phone: '',
-    otp: ''
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
 
+  // Handle Login Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -21,16 +21,17 @@ const LoginForm = ({ onToggleForm }) => {
     try {
         await login(formData);
     } catch (error) {
-      console.error('Login failed:', error);
+      toast.error("Oops! We couldn't log you in. Please try again or reach out to support.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleGoogleLogin = () => {
-    // Simulate Google OAuth
-    login('user@gmail.com', '', 'candidate');
-  };
+  // Handle Login with google
+  // const handleGoogleLogin = () => {
+  //   // Simulate Google OAuth
+  //   login('user@gmail.com', '', 'candidate');
+  // };
 
   return (
     <div className="w-full max-w-md mx-auto">
@@ -51,7 +52,7 @@ const LoginForm = ({ onToggleForm }) => {
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:text-white"
                   placeholder="Enter your email"
                   required
                 />
@@ -68,7 +69,7 @@ const LoginForm = ({ onToggleForm }) => {
                   type={showPassword ? 'text' : 'password'}
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full pl-10 pr-12 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  className="w-full pl-10 pr-12 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:text-white"
                   placeholder="Enter your password"
                   required
                 />
@@ -84,7 +85,8 @@ const LoginForm = ({ onToggleForm }) => {
           </>
 
 
-        <div className="flex items-center justify-between">
+        {/* <div className="text-right">
+          Remember Me
           <label className="flex items-center">
             <input
               type="checkbox"
@@ -92,10 +94,10 @@ const LoginForm = ({ onToggleForm }) => {
             />
             <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">Remember me</span>
           </label>
-          <a href="#" className="text-sm text-primary-600 hover:text-primary-500">
+          <a href="#" className="text-sm text-primary-500 hover:text-primary-300">
             Forgot password?
           </a>
-        </div>
+        </div> */}
 
         <Button
           type="submit"
@@ -103,7 +105,7 @@ const LoginForm = ({ onToggleForm }) => {
           size="lg"
           isLoading={isLoading}
         >
-        'Sign In
+        Sign In
         </Button>
 
         <div className="relative">
@@ -111,11 +113,12 @@ const LoginForm = ({ onToggleForm }) => {
             <div className="w-full border-t border-gray-300 dark:border-gray-600" />
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white dark:bg-gray-900 text-gray-500">Or continue with</span>
+            <span className="px-2 bg-white dark:bg-gray-900 text-gray-500 dark:text-white">Or continue with</span>
           </div>
         </div>
 
-        <Button
+        {/* Sign In With Google */}
+        {/* <Button
           type="button"
           variant="outline"
           className="w-full"
@@ -128,14 +131,14 @@ const LoginForm = ({ onToggleForm }) => {
             className="w-5 h-5 mr-2"
           />
           Sign in with Google
-        </Button>
+        </Button> */}
 
-        <p className="text-center text-sm text-gray-600 dark:text-gray-400">
+        <p className="text-center text-sm text-gray-600 dark:text-gray-400 dark:text-white">
           Don't have an account?{' '}
           <button
             type="button"
             onClick={onToggleForm}
-            className="text-primary-600 hover:text-primary-500 font-medium"
+            className="text-primary-600 dark:hover:text-primary-300 dark:text-primary-500 font-medium"
           >
             Sign up
           </button>

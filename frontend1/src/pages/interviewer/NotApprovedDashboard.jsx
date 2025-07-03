@@ -9,7 +9,7 @@ import { Tooltip } from 'react-tooltip'
 import 'react-tooltip/dist/react-tooltip.css'
 
 
-function NotApprovedDashboard({setActiveItem , interviews , setInterviews , activeInterviews , setActiveInterviews , completedInterviews , setCompletedInterviews, requestedInterviews , setRequestedInterviews}) {
+function NotApprovedDashboard({setActiveItem , interviews , setInterviews , activeInterviews , setActiveInterviews , completedInterviews , setCompletedInterviews, requestedInterviews , setRequestedInterviews , approvedInterviews , setApprovedInterviews, forceRender , setForceRender}) {
   const { user } = useAuth();
   const candidate = user;
   const [averageRating , setAverageRating] = useState('')
@@ -245,7 +245,8 @@ function generatePerformanceDataByDate(interviews) {
           </Card> */}
 
           {/* Recent Interviews */}
-          <Card>
+          {completedInterviews?.length != 0 &&          
+           <Card>
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Completed Interviews</h2>
               <Button variant="ghost" size="sm">
@@ -298,11 +299,11 @@ function generatePerformanceDataByDate(interviews) {
                 );
               })}
             </div>
-          </Card>
-
-          <Card>
+          </Card>}
+{ activeInterviews?.length != 0 &&
+           <Card>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Upcoming  Interviews</h2>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Active  Interviews</h2>
               <Button variant="ghost" size="sm">
                 View All
                 <ArrowRight className="w-4 h-4 ml-2" />
@@ -354,8 +355,8 @@ function generatePerformanceDataByDate(interviews) {
               })}
             </div>
           </Card>
-
-
+}
+{requestedInterviews?.length != 0 &&  
           <Card>
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Requested  Interviews</h2>
@@ -405,7 +406,86 @@ function generatePerformanceDataByDate(interviews) {
               })}
             </div>
           </Card>
+}
+{approvedInterviews?.length != 0 && (
+  <Card>
+    <div className="flex items-center justify-between mb-4">
+      <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Approved Interview</h2>
+      <span className="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full text-sm font-medium">
+        Confirmed
+      </span>
+    </div>
+    <div className="space-y-6">
+      {approvedInterviews?.map((interview) => {
 
+        return (
+          <div
+          key={interview._id}
+          className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-6"
+          >
+          <div className="flex items-start justify-between">
+            <div className="flex items-center space-x-4">
+            <img
+              src={companyLogo}
+              alt="Company"
+              className="w-12 h-12 rounded-lg object-cover"
+            />
+            <div>
+              <h3 className="font-semibold text-gray-900 dark:text-white">
+              {interview?.companyName || "Unknown Company"} Interview
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400">
+              Category {interview.category}
+              </p>
+              <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500 dark:text-gray-400">
+              <div className="flex items-center space-x-1">
+                <Calendar className="w-4 h-4" />
+                <span className="font-medium">
+                {new Date(interview.selectedDate).toLocaleDateString(undefined, {
+                  weekday: 'short',
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric',
+                })}
+                </span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <Clock className="w-4 h-4" />
+                <span className="font-medium">
+                {interview.startTime
+                  ? new Date(`1970-01-01T${interview.startTime}`).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })
+                  : ''}
+                </span>
+              </div>
+              </div>
+              {interview?.interviewerEmail && (
+              <div className="flex items-center space-x-2 mt-3">
+                <Users className="w-4 h-4 text-blue-500" />
+                <span className="text-sm text-gray-700 dark:text-gray-200 font-medium">
+                Interviewer:&nbsp;
+                </span>
+                <span className="text-sm text-blue-700 dark:text-blue-300 font-semibold bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded">
+                {interview.interviewerEmail}
+                </span>
+              </div>
+              )}
+            </div>
+            </div>
+            <div className="flex items-center space-x-3">
+            <span className="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded text-xs font-medium">
+              Approved
+            </span>
+            </div>
+          </div>
+          </div>
+        );
+      })}
+    </div>
+  </Card>
+)}
         </div>
 
         {/* Right Column */}
