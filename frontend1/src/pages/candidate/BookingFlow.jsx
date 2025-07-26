@@ -74,9 +74,9 @@ function BookingFlow() {
 
   const handleBookingConfirm = async() => {
     // Handle booking confirmation
-      console.log('Booking confirmed:', bookingData);
       bookingData['completed'] = false
       bookingData['candidateEmail'] = JSON.parse(localStorage.getItem('user'))?.email
+      bookingData['candidateName'] = JSON.parse(localStorage.getItem('user'))?.name
       const response = await fetch('http://localhost:3001/api/interview/bookInterview', {
         method: 'POST',
         headers: {

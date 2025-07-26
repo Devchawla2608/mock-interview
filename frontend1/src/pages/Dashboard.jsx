@@ -1,9 +1,9 @@
-import React, { useState , useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/Layout/Header';
 import Sidebar from '../components/Layout/Sidebar';
 import CandidateDashboard from './candidate/CandidateDashboard';
 import InterviewerDashboard from './interviewer/InterviewerDashboard';
-// import AdminDashboard from './admin/AdminDashboard';
+import AdminDashboard from './admin/AdminDashboard';
 import BookingFlow from './candidate/BookingFlow';
 import InterviewManagement from './candidate/InterviewManagement';
 import FeedbackReviews from './candidate/FeedbackReviews';
@@ -13,6 +13,7 @@ import CalendarAvailability from './interviewer/CalendarAvailability';
 import InterviewRequests from './interviewer/InterviewRequests';
 import EarningsDashboard from './interviewer/EarningsDashboard';
 import InterviewerReviews from './interviewer/InterviewerReviews';
+import NotApprovedDashboard from './interviewer/NotApprovedDashboard';
 // import InterviewerApprovals from './admin/InterviewerApprovals';
 // import LiveInterviews from './admin/LiveInterviews';
 // import CompanyManagement from './admin/CompanyManagement';
@@ -24,61 +25,111 @@ import { useAuth } from '../components/contexts/AuthContext';
 function Dashboard() {
   const { user } = useAuth();
   const [activeItem, setActiveItem] = useState('dashboard');
-  const [interviews,  setInterviews] = useState([])
-  const [completedInterviews , setCompletedInterviews] = useState([])
-  const [activeInterviews , setActiveInterviews] = useState([])
+  const [interviews, setInterviews] = useState([])
+  const [completedInterviews, setCompletedInterviews] = useState([])
+  const [activeInterviews, setActiveInterviews] = useState([])
+  const [requestedInterviews , setRequestedInterviews] = useState([])
+  const [approvedInterviews , setApprovedInterviews] = useState([])
+  const [forceRender , setForceRender] = useState(false)
+  
 
-    useEffect(()=>{
-      async function getUserInterviews(){
-        let user = JSON.parse(localStorage.getItem('user'))
-        let response = await fetch(`http://localhost:3001/api/interview/interviews/${user.email}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        response = await response.json()
-        setInterviews(response?.interviews)
-        const completedInterviews = response?.interviews?.filter(
-          interview => interview.completed == true
+  useEffect(() => {
+    async function getUserInterviews() {
+      let user = JSON.parse(localStorage.getItem('user'))
+      let response = await fetch(`http://localhost:3001/api/interview/interviews/${user?.email}/${user?.role}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      response = await response.json()
+      let myInterviews;
+      if (user.role == 'candidate' || (user.isApproved == false &&  user.role == 'interviewer')) {
+        myInterviews = response?.interviews?.filter(
+          interview => interview.candidateEmail === user.email
         );
-        const activeInterviews = response?.interviews?.filter(
-          interview => interview.completed != true
+      } else {
+        myInterviews = response?.interviews?.filter(
+          interview => interview.interviewerEmail == user?.email
         );
-        setCompletedInterviews(completedInterviews)
-        setActiveInterviews(activeInterviews)
+        console.log("myInterviews" ,myInterviews)
       }
+      setInterviews(myInterviews)
+        const mycompletedInterviews = myInterviews?.filter(
+        interview => interview.completed == true
+      );
+      const myApprovedInterviews = myInterviews?.filter(
+        interview => interview.completed !== true && interview.status === "approved"
+      );
+      const myActiveInterviews = myInterviews?.filter(
+        interview => interview.completed !== true && interview.status === "active"
+      );
+      const myRequestedInterviews = myInterviews?.filter(
+        interview => interview.completed !== true && interview.status === "requested"
+      );
+      console.log("mycompletedInterviews" , mycompletedInterviews , myActiveInterviews , myRequestedInterviews , myApprovedInterviews)
+      setCompletedInterviews(mycompletedInterviews)
+      setActiveInterviews(myActiveInterviews)
+      setRequestedInterviews(myRequestedInterviews)
+      setApprovedInterviews(myApprovedInterviews)
+    } 
     getUserInterviews()
-    },[])
+  }, [forceRender])
 
   const renderContent = () => {
     switch (user && user.role) {
       case 'candidate':
         switch (activeItem) {
           case 'dashboard':
-            return <CandidateDashboard 
-            setActiveItem={setActiveItem} 
-            interviews={interviews}
-            setInterviews={setInterviews}
-            activeInterviews={activeInterviews}
-            setActiveInterviews={setActiveInterviews}
-            completedInterviews={completedInterviews}
-            setCompletedInterviews={setCompletedInterviews}
+            return <CandidateDashboard
+              setActiveItem={setActiveItem}
+              interviews={interviews}
+              setInterviews={setInterviews}
+              activeInterviews={activeInterviews}
+              setActiveInterviews={setActiveInterviews}
+              completedInterviews={completedInterviews}
+              setCompletedInterviews={setCompletedInterviews}
+              requestedInterviews={requestedInterviews}
+              setRequestedInterviews={setRequestedInterviews}
+              approvedInterviews={approvedInterviews}
+              setApprovedInterviews={setApprovedInterviews}
+              setForceRender={setForceRender}
+              forceRender={forceRender}
             />;
           case 'book-interview':
             return <BookingFlow />;
           case 'interviews':
-            return <InterviewManagement 
-                setActiveItem={setActiveItem} 
+            return <InterviewManagement
+              setActiveItem={setActiveItem}
+              interviews={interviews}
+              setInterviews={setInterviews}
+              activeInterviews={activeInterviews}
+              setActiveInterviews={setActiveInterviews}
+              completedInterviews={completedInterviews}
+              setCompletedInterviews={setCompletedInterviews}
+              requestedInterviews={requestedInterviews}
+              setRequestedInterviews={setRequestedInterviews}
+              approvedInterviews={approvedInterviews}
+              setApprovedInterviews={setApprovedInterviews}
+              setForceRender={setForceRender}
+              forceRender={forceRender}
+            />;
+          case 'feedback':
+            return <FeedbackReviews
+                setActiveItem={setActiveItem}
                 interviews={interviews}
                 setInterviews={setInterviews}
                 activeInterviews={activeInterviews}
                 setActiveInterviews={setActiveInterviews}
                 completedInterviews={completedInterviews}
                 setCompletedInterviews={setCompletedInterviews}
+                requestedInterviews={requestedInterviews}
+                setRequestedInterviews={setRequestedInterviews}
+                approvedInterviews={approvedInterviews}
+                setApprovedInterviews={setApprovedInterviews}
+                setForceRender={setForceRender}
+                forceRender={forceRender}
             />;
-          case 'feedback':
-            return <FeedbackReviews />;
           case 'payments':
             return <PaymentHistory />;
           case 'profile':
@@ -88,40 +139,82 @@ function Dashboard() {
         }
       case 'interviewer':
         switch (activeItem) {
-          case 'dashboard':
-            return <InterviewerDashboard />;
-          case 'calendar':
-            return <CalendarAvailability />;
-          case 'interviews':
-            return <InterviewRequests />;
-          case 'earnings':
-            return <EarningsDashboard />;
-          case 'feedback':
-            return <InterviewerReviews />;
-          case 'profile':
-            return <ProfileSettings />;
+            case 'dashboard':
+            return user?.isApproved ? (
+              <InterviewerDashboard
+              setActiveItem={setActiveItem}
+              interviews={interviews}
+              setInterviews={setInterviews}
+              activeInterviews={activeInterviews}
+              setActiveInterviews={setActiveInterviews}
+              completedInterviews={completedInterviews}
+              setCompletedInterviews={setCompletedInterviews}
+              requestedInterviews={requestedInterviews}
+              setRequestedInterviews={setRequestedInterviews}
+              approvedInterviews={approvedInterviews}
+              setApprovedInterviews={setApprovedInterviews}
+              setForceRender={setForceRender}
+              forceRender={forceRender}
+              />
+            ) : (
+              <NotApprovedDashboard
+              setActiveItem={setActiveItem}
+              interviews={interviews}
+              setInterviews={setInterviews}
+              activeInterviews={activeInterviews}
+              setActiveInterviews={setActiveInterviews}
+              completedInterviews={completedInterviews}
+              setCompletedInterviews={setCompletedInterviews}
+              requestedInterviews={requestedInterviews}
+              setRequestedInterviews={setRequestedInterviews}
+              approvedInterviews={approvedInterviews}
+              setApprovedInterviews={setApprovedInterviews}
+              setForceRender={setForceRender}
+              forceRender={forceRender}
+              />
+            );
+          // case 'calendar':
+          //   return <CalendarAvailability />;
+          // case 'interviews':
+          //   return <InterviewRequests 
+          //     setActiveItem={setActiveItem}
+          //     interviews={interviews}
+          //     setInterviews={setInterviews}
+          //     activeInterviews={activeInterviews}
+          //     setActiveInterviews={setActiveInterviews}
+          //     completedInterviews={completedInterviews}
+          //     setCompletedInterviews={setCompletedInterviews}
+          //     requestedInterviews={requestedInterviews}
+          //     setRequestedInterviews={setRequestedInterviews}
+          //   />;
+          // case 'earnings':
+          //   return <EarningsDashboard />;
+          // case 'feedback':
+          //   return <InterviewerReviews />;
+          // case 'profile':
+          //   return <ProfileSettings />;
           default:
             return <InterviewerDashboard />;
         }
-      // case 'admin':
-      //   switch (activeItem) {
-      //     case 'dashboard':
-      //       return <AdminDashboard />;
-      //     case 'interviewers':
-      //       return <InterviewerApprovals />;
-      //     case 'interviews':
-      //       return <LiveInterviews />;
-      //     case 'companies':
-      //       return <CompanyManagement />;
-      //     case 'disputes':
-      //       return <DisputeResolution />;
-      //     case 'analytics':
-      //       return <PlatformAnalytics />;
-      //     case 'settings':
-      //       return <PlatformSettings />;
-      //     default:
-      //       return <AdminDashboard />;
-      //   }
+      case 'admin':
+        switch (activeItem) {
+          case 'dashboard':
+            return <AdminDashboard />;
+          // case 'interviewers':
+          //   return <InterviewerApprovals />;
+          // case 'interviews':
+          //   return <LiveInterviews />;
+          // case 'companies':
+          //   return <CompanyManagement />;
+          // case 'disputes':
+          //   return <DisputeResolution />;
+          // case 'analytics':
+          //   return <PlatformAnalytics />;
+          // case 'settings':
+          //   return <PlatformSettings />;
+          // default:
+          //   return <AdminDashboard />;
+        }
       default:
         return <CandidateDashboard />;
     }

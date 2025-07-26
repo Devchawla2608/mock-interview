@@ -26,10 +26,93 @@ function AuthProvider({ children }) {
   }, []);
 
   const login = async (userData) => {
+    try{
+      const { email, password } = userData || {};
+      if (!email || !password) {
+        toast.error("Email and password are required");
+        return;
+      }
+      setIsLoading(true);
+      let response = await fetch('http://localhost:3001/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+      if(response?.status == 400){
+        toast.error("Email and password are required");
+        return;
+      }else if(response?.status == 401){
+        toast.error("Your email or password is wrong, please try again!")
+        return
+      }
+      else if(response?.status == 404){
+        toast.error("User does not exists, please register yourself first")
+        return
+      }
+      else if(response.status == 500){
+        toast.error("Ops, We are facing some issues, please try again");
+        return ;
+      }
+      response = await response.json()
+      toast.success("Logged in successfully. Welcome back!");
+      setUser(response?.user);
+      localStorage.setItem("access_token" , response?.token)
+      localStorage.setItem('user', JSON.stringify(response?.user));
+      setIsLoading(false);
+      return true;
+    }catch(err){
+      toast.error("Ops, We are facing some issues, please try again");
+      return;
+    }
+  };
+
+  const updateProfile = async (formData) =>{
     setIsLoading(true);
-    
-    // Simulate API call
-    let response = await fetch('http://localhost:3001/api/auth/login', {
+    console.log("Form Data: ", formData);
+
+    let userData; 
+    if(formData?.role == 'candidate'){
+      userData = {  
+        name: formData.name,
+        email: formData.email,
+        location: formData.location,
+        profileCompletion: formData.profileCompletion,
+        bio: formData.bio,
+        experience: formData.experience,
+        skills: formData.skills,
+        codeForces: formData.codeForces,
+        codeChef: formData.codeChef,
+        github: formData.github,
+        linkedin: formData.linkedin,
+        leetcode: formData.leetcode,
+        location: formData.location,
+        currentRole: formData.currentRole,
+        currentCompany: formData.currentCompany,
+      }
+    }else if(formData?.role == 'interviewer'){
+      userData = {
+        name: formData.name,
+        email: formData.email,
+        role: formData.role,
+        profileCompletion: formData.profileCompletion,
+        bio: formData.bio,
+        experience: formData.experience,
+        skills: formData.skills,
+        codeforces: formData.codeforces,
+        codechef: formData.codechef,
+        linkedin: formData.linkedin,
+        leetcode: formData.leetcode,
+        github: formData.github,
+        interviewerRole: formData.interviewerRole,
+        category: formData.categories[0],
+        location: formData.location,
+        currentRole: formData.currentRole,
+        currentCompany: formData.currentCompany,
+      }
+    }
+    let response = await fetch('http://localhost:3001/api/auth/update-profile', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -42,35 +125,18 @@ function AuthProvider({ children }) {
       return false;
     }
     response = await response.json()
-    localStorage.setItem("access_token" , response?.token)
-    toast.success("Logged in succesfully")
-    if (userData.role === 'interviewer') {
-      userData = { ...sampleInterviewer };
-    } else if (userData.role === 'admin') {
-      userData = {
-        id: '3',
-        email: userData.email,
-        name: 'Admin User',
-        role: 'admin',
-        avatar: 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop',
-        profileCompletion: 100,
-        createdAt: new Date(),
-        permissions: ['all']
-      };
-    } else {
-      userData = { ...sampleCandidate, email : userData.email };
-    }
-    
-    setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
+    console.log(response)
+    toast.success("Profile updated successfully");
+    setUser(response?.user);
+    localStorage.setItem('user', JSON.stringify(response?.user));
     setIsLoading(false);
     return true;
-  };
+  }
 
   const register = async (userData) => {
     try{
     setIsLoading(true);
-    
+    console.log("userData" , userData)
     const response = await fetch('http://localhost:3001/api/auth/register', {
       method: 'POST',
       headers: {
@@ -128,7 +194,8 @@ function AuthProvider({ children }) {
     logout,
     register,
     isLoading,
-    switchRole
+    switchRole,
+    updateProfile
   };
 
   return (

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import LoginForm from '../components/Auth/LoginForm';
 import RegisterForm from '../components/Auth/RegisterForm';
+import NotApprovedDashboard from './interviewer/NotApprovedDashboard';
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);

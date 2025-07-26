@@ -97,9 +97,9 @@ function PaymentHistory() {
     return matchesSearch && matchesStatus;
   });
 
-  const totalSpent = payments.filter(p => p.status === 'completed').reduce((sum, p) => sum + p.amount, 0);
-  const pendingAmount = payments.filter(p => p.status === 'pending').reduce((sum, p) => sum + p.amount, 0);
-  const refundedAmount = payments.filter(p => p.status === 'refunded').reduce((sum, p) => sum + p.amount, 0);
+  const totalSpent = payments.filter(p => p.status === 'completed')?.reduce((sum, p) => sum + p.amount, 0);
+  const pendingAmount = payments.filter(p => p.status === 'pending')?.reduce((sum, p) => sum + p.amount, 0);
+  const refundedAmount = payments.filter(p => p.status === 'refunded')?.reduce((sum, p) => sum + p.amount, 0);
 
   return (
     <div className="space-y-6 animate-fade-in">

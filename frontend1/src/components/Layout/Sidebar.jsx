@@ -17,26 +17,26 @@ import { useAuth } from '../contexts/AuthContext';
 
 function Sidebar({ activeItem, onItemClick }) {
   const { user } = useAuth();
-
+  console.log("user"  , user)
   const getMenuItems = () => {
     switch (user?.role) {
       case 'candidate':
         return [
           { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
           { id: 'book-interview', label: 'Book Interview', icon: Calendar },
-          // { id: 'interviews', label: 'My Interviews', icon: BookOpen },
-          // { id: 'feedback', label: 'Feedback & Reviews', icon: Star },
-          // { id: 'payments', label: 'Payments', icon: CreditCard },
-          // { id: 'profile', label: 'Profile', icon: Settings },
+          { id: 'interviews', label: 'My Interviews', icon: BookOpen },
+          { id: 'feedback', label: 'Feedback & Reviews', icon: Star },
+          { id: 'payments', label: 'Payments', icon: CreditCard },
+          { id: 'profile', label: 'Profile', icon: Settings },
         ];
       case 'interviewer':
         return [
           { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-          { id: 'calendar', label: 'Calendar & Availability', icon: Calendar },
-          { id: 'interviews', label: 'Interview Requests', icon: BookOpen },
-          { id: 'earnings', label: 'Earnings', icon: TrendingUp },
-          { id: 'feedback', label: 'Reviews', icon: Star },
-          { id: 'profile', label: 'Profile', icon: Settings },
+          // { id: 'interviews', label: 'Interview Requests', icon: BookOpen },
+          // { id: 'profile', label: 'Profile', icon: Settings },
+          // { id: 'calendar', label: 'Calendar & Availability', icon: Calendar },
+          // { id: 'earnings', label: 'Earnings', icon: TrendingUp },
+          // { id: 'feedback', label: 'Reviews', icon: Star },
         ];
       case 'admin':
         return [
