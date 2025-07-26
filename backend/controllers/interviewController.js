@@ -144,3 +144,16 @@ exports.acceptInterview = async (req, res) => {
   }
 };
 
+
+exports.completeInterview = async (req , res) => {
+    try {
+    const interview = await Interview.findByIdAndUpdate(
+      req.params.id,
+      { notificationStatus: req.body.status || 'completed' },
+    );
+    res.json(interview);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
