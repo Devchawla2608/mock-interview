@@ -1,7 +1,13 @@
+<<<<<<< Updated upstream
 import React, { useState } from 'react';
 import LoginForm from '../components/Auth/LoginForm';
 import RegisterForm from '../components/Auth/RegisterForm';
 import NotApprovedDashboard from './interviewer/NotApprovedDashboard';
+=======
+import React, { useState } from "react";
+import LoginForm from "../components/Auth/LoginForm";
+import RegisterForm from "../components/Auth/RegisterForm";
+>>>>>>> Stashed changes
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -16,9 +22,13 @@ const AuthPage = () => {
               <div className="w-10 h-10 bg-gradient-to-r from-primary-600 to-secondary-500 rounded-xl flex items-center justify-center">
                 <span className="text-white font-bold text-lg">TM</span>
               </div>
-              <span className="text-2xl font-bold text-gray-900 dark:text-white">TechMock</span>
+              <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                TechMock
+              </span>
             </div>
-            <p className="mt-2 text-gray-600 dark:text-gray-400">Smart Interview Platform</p>
+            <p className="mt-2 text-gray-600 dark:text-gray-400">
+              Smart Interview Platform
+            </p>
           </div>
 
           {isLogin ? (
@@ -33,4 +43,3 @@ const AuthPage = () => {
 };
 
 export default AuthPage;
-

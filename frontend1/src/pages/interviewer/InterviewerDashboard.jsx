@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import React, { useEffect, useState } from 'react';
 import { DollarSign, Calendar, Star, TrendingUp, Users, Clock, Award, Target, RefreshCcw } from 'lucide-react';
 import Card from '../../components/UI/Card';
@@ -6,6 +7,34 @@ import { useAuth } from '../../components/contexts/AuthContext';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { toast } from 'react-toastify';
 function InterviewerDashboard({ setActiveItem, interviews, setInterviews, activeInterviews, setActiveInterviews, completedInterviews, setCompletedInterviews, requestedInterviews, setRequestedInterviews, approvedInterviews, setApprovedInterviews, forceRender, setForceRender }) {
+=======
+import React from "react";
+import {
+  DollarSign,
+  Calendar,
+  Star,
+  TrendingUp,
+  Users,
+  Clock,
+  Award,
+} from "lucide-react";
+import Card from "../../components/UI/Card";
+import Button from "../../components/UI/Button";
+import { useAuth } from "../../components/contexts/AuthContext";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+} from "recharts";
+
+function InterviewerDashboard() {
+>>>>>>> Stashed changes
   const { user } = useAuth();
   const [averageRating, setAverageRating] = useState('')
   const [growth, setGrowth] = useState('')
@@ -117,22 +146,22 @@ function InterviewerDashboard({ setActiveItem, interviews, setInterviews, active
   }, [])
   const interviewer = user;
   const earningsData = [
-    { month: 'Jan', earnings: 15000 },
-    { month: 'Feb', earnings: 18000 },
-    { month: 'Mar', earnings: 22000 },
-    { month: 'Apr', earnings: 25000 },
-    { month: 'May', earnings: 28000 },
-    { month: 'Jun', earnings: 32000 }
+    { month: "Jan", earnings: 15000 },
+    { month: "Feb", earnings: 18000 },
+    { month: "Mar", earnings: 22000 },
+    { month: "Apr", earnings: 25000 },
+    { month: "May", earnings: 28000 },
+    { month: "Jun", earnings: 32000 },
   ];
 
   const interviewsData = [
-    { day: 'Mon', interviews: 3 },
-    { day: 'Tue', interviews: 5 },
-    { day: 'Wed', interviews: 2 },
-    { day: 'Thu', interviews: 4 },
-    { day: 'Fri', interviews: 6 },
-    { day: 'Sat', interviews: 3 },
-    { day: 'Sun', interviews: 1 }
+    { day: "Mon", interviews: 3 },
+    { day: "Tue", interviews: 5 },
+    { day: "Wed", interviews: 2 },
+    { day: "Thu", interviews: 4 },
+    { day: "Fri", interviews: 6 },
+    { day: "Sat", interviews: 3 },
+    { day: "Sun", interviews: 1 },
   ];
 
   return (
@@ -142,18 +171,26 @@ function InterviewerDashboard({ setActiveItem, interviews, setInterviews, active
       <div className="bg-gradient-to-r from-secondary-600 to-primary-500 rounded-2xl p-8 text-white">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Welcome back, {interviewer?.name}! 🎯</h1>
-            <p className="text-secondary-100 text-lg">Ready to help candidates succeed?</p>
+            <h1 className="text-3xl font-bold mb-2">
+              Welcome back, {interviewer?.name}! 🎯
+            </h1>
+            <p className="text-secondary-100 text-lg">
+              Ready to help candidates succeed?
+            </p>
           </div>
           <div className="hidden md:block">
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
               <div className="text-right">
                 <p className="text-sm text-secondary-100">This Month</p>
-                <p className="text-2xl font-bold">₹{interviewer?.monthlyEarnings?.toLocaleString()}</p>
+                <p className="text-2xl font-bold">
+                  ₹{interviewer?.monthlyEarnings?.toLocaleString()}
+                </p>
               </div>
               <div className="flex items-center space-x-2 mt-2">
                 <Star className="w-4 h-4 text-yellow-300" />
-                <span className="text-sm">{interviewer?.rating} ({interviewer?.reviewCount} reviews)</span>
+                <span className="text-sm">
+                  {interviewer?.rating} ({interviewer?.reviewCount} reviews)
+                </span>
               </div>
             </div>
           </div>
@@ -166,12 +203,18 @@ function InterviewerDashboard({ setActiveItem, interviews, setInterviews, active
           <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center mx-auto mb-3">
             <DollarSign className="w-6 h-6 text-green-600 dark:text-green-400" />
           </div>
+<<<<<<< Updated upstream
           {user?.categories == 'A' && <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{(completedInterviews?.length) * 149} Rs.</h3>
           }
           {user?.categories == 'B' && <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{(completedInterviews?.length) * 99} Rs.</h3>
           }
           {user?.categories == 'C' && <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{(completedInterviews?.length) * 49} Rs.</h3>
           }
+=======
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+            ₹{interviewer?.totalEarnings?.toLocaleString()}
+          </h3>
+>>>>>>> Stashed changes
           <p className="text-gray-600 dark:text-gray-400">Total Earnings</p>
         </Card>
 
@@ -179,15 +222,30 @@ function InterviewerDashboard({ setActiveItem, interviews, setInterviews, active
           <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mx-auto mb-3">
             <Calendar className="w-6 h-6 text-blue-600 dark:text-blue-400" />
           </div>
+<<<<<<< Updated upstream
           <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{completedInterviews?.length}</h3>
           <p className="text-gray-600 dark:text-gray-400">Interviews This Month</p>
+=======
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+            24
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400">
+            Interviews This Month
+          </p>
+>>>>>>> Stashed changes
         </Card>
 
         <Card className="text-center" hover>
           <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900 rounded-lg flex items-center justify-center mx-auto mb-3">
             <Star className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
           </div>
+<<<<<<< Updated upstream
           <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{averageRating}</h3>
+=======
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+            {interviewer?.rating}
+          </h3>
+>>>>>>> Stashed changes
           <p className="text-gray-600 dark:text-gray-400">Average Rating</p>
         </Card>
 
@@ -195,7 +253,13 @@ function InterviewerDashboard({ setActiveItem, interviews, setInterviews, active
           <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center mx-auto mb-3">
             <TrendingUp className="w-6 h-6 text-purple-600 dark:text-purple-400" />
           </div>
+<<<<<<< Updated upstream
           <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{growth}%</h3>
+=======
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+            +15%
+          </h3>
+>>>>>>> Stashed changes
           <p className="text-gray-600 dark:text-gray-400">Growth Rate</p>
         </Card>
       </div>
@@ -205,8 +269,15 @@ function InterviewerDashboard({ setActiveItem, interviews, setInterviews, active
         {/* Left Column */}
         <div className="lg:col-span-2 space-y-6">
           {/* Earnings Chart */}
+<<<<<<< Updated upstream
           {/* <Card>
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">Monthly Earnings</h2>
+=======
+          <Card>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
+              Monthly Earnings
+            </h2>
+>>>>>>> Stashed changes
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={earningsData}>
@@ -215,20 +286,23 @@ function InterviewerDashboard({ setActiveItem, interviews, setInterviews, active
                   <YAxis className="text-xs" />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '8px',
-                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                      backgroundColor: "rgba(255, 255, 255, 0.95)",
+                      border: "1px solid #e5e7eb",
+                      borderRadius: "8px",
+                      boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
                     }}
-                    formatter={(value) => [`₹${value.toLocaleString()}`, 'Earnings']}
+                    formatter={(value) => [
+                      `₹${value.toLocaleString()}`,
+                      "Earnings",
+                    ]}
                   />
                   <Line
                     type="monotone"
                     dataKey="earnings"
                     stroke="#10b981"
                     strokeWidth={3}
-                    dot={{ fill: '#10b981', strokeWidth: 2, r: 6 }}
-                    activeDot={{ r: 8, stroke: '#10b981', strokeWidth: 2 }}
+                    dot={{ fill: "#10b981", strokeWidth: 2, r: 6 }}
+                    activeDot={{ r: 8, stroke: "#10b981", strokeWidth: 2 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -236,8 +310,15 @@ function InterviewerDashboard({ setActiveItem, interviews, setInterviews, active
           </Card> */}
 
           {/* Weekly Interviews */}
+<<<<<<< Updated upstream
           {/* <Card>
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">This Week's Interviews</h2>
+=======
+          <Card>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
+              This Week's Interviews
+            </h2>
+>>>>>>> Stashed changes
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={interviewsData}>
@@ -246,13 +327,17 @@ function InterviewerDashboard({ setActiveItem, interviews, setInterviews, active
                   <YAxis className="text-xs" />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '8px',
-                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                      backgroundColor: "rgba(255, 255, 255, 0.95)",
+                      border: "1px solid #e5e7eb",
+                      borderRadius: "8px",
+                      boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
                     }}
                   />
-                  <Bar dataKey="interviews" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                  <Bar
+                    dataKey="interviews"
+                    fill="#3b82f6"
+                    radius={[4, 4, 0, 0]}
+                  />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -261,6 +346,7 @@ function InterviewerDashboard({ setActiveItem, interviews, setInterviews, active
           {/* Pending Requests */}
           <Card>
             <div className="flex items-center justify-between mb-6">
+<<<<<<< Updated upstream
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white">New Interview Requests</h2>
               <div className="flex items-center gap-2">
                 <Button
@@ -319,6 +405,73 @@ function InterviewerDashboard({ setActiveItem, interviews, setInterviews, active
                     </div>
                   );
                 })}
+=======
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                Pending Interview Requests
+              </h2>
+              <Button variant="ghost" size="sm">
+                View All
+              </Button>
+            </div>
+            <div className="space-y-4">
+              {[
+                {
+                  candidate: "John Doe",
+                  company: "Google",
+                  category: "A",
+                  time: "2:00 PM",
+                  date: "Dec 28",
+                },
+                {
+                  candidate: "Jane Smith",
+                  company: "Microsoft",
+                  category: "A",
+                  time: "4:00 PM",
+                  date: "Dec 29",
+                },
+                {
+                  candidate: "Mike Johnson",
+                  company: "Amazon",
+                  category: "B",
+                  time: "10:00 AM",
+                  date: "Dec 30",
+                },
+              ].map((request, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900 rounded-full flex items-center justify-center">
+                      <Users className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-gray-900 dark:text-white">
+                        {request.candidate}
+                      </h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {request.company} • Category {request.category}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <div className="text-right text-sm">
+                      <p className="text-gray-900 dark:text-white font-medium">
+                        {request.date}
+                      </p>
+                      <p className="text-gray-500 dark:text-gray-400">
+                        {request.time}
+                      </p>
+                    </div>
+                    <div className="flex space-x-2">
+                      <Button size="sm" variant="outline">
+                        Decline
+                      </Button>
+                      <Button size="sm">Accept</Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+>>>>>>> Stashed changes
             </div>
           </Card>
           {/* Your Calender */}
@@ -433,7 +586,9 @@ function InterviewerDashboard({ setActiveItem, interviews, setInterviews, active
         <div className="space-y-6">
           {/* Quick Actions */}
           <Card>
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h2>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+              Quick Actions
+            </h2>
             <div className="space-y-3">
               <Button className="w-full justify-start" size="lg">
                 <Calendar className="w-5 h-5 mr-3" />
@@ -452,8 +607,11 @@ function InterviewerDashboard({ setActiveItem, interviews, setInterviews, active
 
           {/* Categories */}
           <Card>
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Your Categories</h2>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+              Your Categories
+            </h2>
             <div className="space-y-3">
+<<<<<<< Updated upstream
 
               <div key={interviewer?.category} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                 <div className="flex items-center space-x-3">
@@ -466,6 +624,34 @@ function InterviewerDashboard({ setActiveItem, interviews, setInterviews, active
                         'text-green-600 dark:text-green-400'
                       }`}>
                       {interviewer?.category}
+=======
+              {interviewer?.categories?.map((category) => (
+                <div
+                  key={category}
+                  className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <div className="flex items-center space-x-3">
+                    <div
+                      className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                        category === "A"
+                          ? "bg-red-100 dark:bg-red-900"
+                          : category === "B"
+                          ? "bg-blue-100 dark:bg-blue-900"
+                          : "bg-green-100 dark:bg-green-900"
+                      }`}>
+                      <span
+                        className={`font-bold text-sm ${
+                          category === "A"
+                            ? "text-red-600 dark:text-red-400"
+                            : category === "B"
+                            ? "text-blue-600 dark:text-blue-400"
+                            : "text-green-600 dark:text-green-400"
+                        }`}>
+                        {category}
+                      </span>
+                    </div>
+                    <span className="font-medium text-gray-900 dark:text-white">
+                      Category {category}
+>>>>>>> Stashed changes
                     </span>
                   </div>
                   <span className="font-medium text-gray-900 dark:text-white">Category {interviewer?.category}</span>
@@ -478,15 +664,36 @@ function InterviewerDashboard({ setActiveItem, interviews, setInterviews, active
           </Card>
 
           {/* Recent Reviews */}
+<<<<<<< Updated upstream
           {/* <Card>
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Recent Reviews</h2>
+=======
+          <Card>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+              Recent Reviews
+            </h2>
+>>>>>>> Stashed changes
             <div className="space-y-4">
               {[
-                { rating: 5, comment: 'Excellent interviewer! Very thorough and helpful.', candidate: 'John D.' },
-                { rating: 4, comment: 'Great feedback and constructive criticism.', candidate: 'Sarah M.' },
-                { rating: 5, comment: 'Professional and knowledgeable. Highly recommend!', candidate: 'Mike R.' }
+                {
+                  rating: 5,
+                  comment: "Excellent interviewer! Very thorough and helpful.",
+                  candidate: "John D.",
+                },
+                {
+                  rating: 4,
+                  comment: "Great feedback and constructive criticism.",
+                  candidate: "Sarah M.",
+                },
+                {
+                  rating: 5,
+                  comment: "Professional and knowledgeable. Highly recommend!",
+                  candidate: "Mike R.",
+                },
               ].map((review, index) => (
-                <div key={index} className="border-b border-gray-200 dark:border-gray-700 pb-4 last:border-b-0">
+                <div
+                  key={index}
+                  className="border-b border-gray-200 dark:border-gray-700 pb-4 last:border-b-0">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center space-x-1">
                       {[1, 2, 3, 4, 5].map((star) => (
@@ -494,15 +701,19 @@ function InterviewerDashboard({ setActiveItem, interviews, setInterviews, active
                           key={star}
                           className={`w-4 h-4 ${
                             star <= review.rating
-                              ? 'text-yellow-400 fill-current'
-                              : 'text-gray-300 dark:text-gray-600'
+                              ? "text-yellow-400 fill-current"
+                              : "text-gray-300 dark:text-gray-600"
                           }`}
                         />
                       ))}
                     </div>
-                    <span className="text-sm text-gray-500 dark:text-gray-400">{review.candidate}</span>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                      {review.candidate}
+                    </span>
                   </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">{review.comment}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {review.comment}
+                  </p>
                 </div>
               ))}
             </div>
@@ -514,7 +725,9 @@ function InterviewerDashboard({ setActiveItem, interviews, setInterviews, active
               <div className="w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-3">
                 <Award className="w-8 h-8 text-white" />
               </div>
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Top Interviewer</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+                Top Interviewer
+              </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 You're in the top 10% of interviewers this month!
               </p>

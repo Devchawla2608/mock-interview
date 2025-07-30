@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 ﻿import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './components/contexts/AuthContext.jsx';
@@ -8,6 +9,21 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Dashboard from './pages/Dashboard';
 import BookingFlow from './pages/candidate/BookingFlow.jsx';
+=======
+﻿import React from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { AuthProvider, useAuth } from "./components/contexts/AuthContext.jsx";
+import { ThemeProvider } from "./components/contexts/ThemeContext.jsx";
+import AuthPage from "./pages/AuthPage.jsx";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Dashboard from "./pages/Dashboard.jsx";
+>>>>>>> Stashed changes
 
 const AppContent = () => {
   const { user, isLoading } = useAuth();
@@ -39,6 +55,7 @@ const AppContent = () => {
             )
           } 
         />
+<<<<<<< Updated upstream
         <Route 
           path="/dashboard/*" 
           element={
@@ -63,6 +80,12 @@ const AppContent = () => {
               replace 
             />
           } 
+=======
+
+        <Route
+          path="/"
+          element={<Navigate to={user ? "/dashboard" : "/auth"} replace />}
+>>>>>>> Stashed changes
         />
       </Routes>
     </Router>
@@ -81,4 +104,7 @@ function App() {
 }
 
 export default App;
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes

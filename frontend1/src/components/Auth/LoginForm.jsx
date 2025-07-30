@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import{ useState } from 'react';
 import { Eye, EyeOff, Mail, Lock} from 'lucide-react';
 import Button from '../UI/Button';
@@ -8,39 +9,154 @@ const LoginForm = ({ onToggleForm }) => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+=======
+import React, { useState } from "react";
+import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+import Button from "../UI/Button";
+import { useAuth } from "../contexts/AuthContext";
+import { OtpModal } from "../UI";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import useOtpVerification from "../../hooks/useOtpVerification";
+
+const LoginForm = ({ onToggleForm }) => {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    phone: "",
+    otp: "",
+>>>>>>> Stashed changes
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [emailForOtp, setEmailForOtp] = useState("");
+  const {
+    requestOtp,
+    verifyOtp,
+    isLoading: otpLoading,
+    error: otpError,
+    clearError,
+  } = useOtpVerification();
+  const navigate = useNavigate();
 
   // Handle Login Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("=== Login Form Submit ===");
+    console.log("Form Data:", formData);
     setIsLoading(true);
-    
+
     try {
-        await login(formData);
+      let response = await fetch("http://localhost:3001/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      console.log("Login response status:", response.status);
+
+      if (response.status === 404) {
+        console.log("User not found");
+        toast.error(
+          "User not found. Please check your email address or sign up."
+        );
+        setIsLoading(false);
+        return;
+      }
+
+      if (response.status === 403) {
+        console.log("Email not verified, showing OTP modal");
+        setEmailForOtp(formData.email);
+        setShowOtpModal(true);
+        setIsLoading(false);
+        return;
+      }
+
+      if (response.status !== 200) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error("Login error:", errorData);
+        toast.error(
+          errorData.message ||
+            "Login failed. Invalid credentials or email not verified."
+        );
+        setIsLoading(false);
+        return false;
+      }
+
+      console.log("Login successful, navigating to dashboard");
+      await login({ email: formData.email, password: formData.password });
+      navigate("/dashboard");
     } catch (error) {
+<<<<<<< Updated upstream
       toast.error("Oops! We couldn't log you in. Please try again or reach out to support.");
+=======
+      console.error("Login failed:", error);
+      toast.error("Login failed. Invalid credentials or email not verified.");
+>>>>>>> Stashed changes
     } finally {
       setIsLoading(false);
     }
   };
 
+<<<<<<< Updated upstream
   // Handle Login with google
   // const handleGoogleLogin = () => {
   //   // Simulate Google OAuth
   //   login('user@gmail.com', '', 'candidate');
   // };
+=======
+  const handleGoogleLogin = () => {
+    // Simulate Google OAuth
+    login("user@gmail.com", "", "candidate");
+  };
+
+  const handleVerifyOtp = async (otp) => {
+    console.log("=== OTP Verification (Login) ===");
+    console.log("Email:", emailForOtp);
+    console.log("OTP:", otp);
+
+    clearError();
+    const success = await verifyOtp(emailForOtp, otp);
+    console.log("OTP verification result:", success);
+
+    if (success) {
+      console.log("OTP verified successfully, logging in...");
+      setShowOtpModal(false);
+      toast.success("Email verified! Logging you in...");
+      setIsLoading(true);
+      // Add a short delay to ensure DB update is visible
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      await login({ email: formData.email, password: formData.password });
+      setIsLoading(false);
+      navigate("/dashboard");
+    }
+  };
+
+  const handleResendOtp = async () => {
+    console.log("=== Resending OTP (Login) ===");
+    console.log("Email:", emailForOtp);
+
+    clearError();
+    const success = await requestOtp(emailForOtp);
+    console.log("Resend OTP result:", success);
+  };
+>>>>>>> Stashed changes
 
   return (
     <div className="w-full max-w-md mx-auto">
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Welcome Back</h2>
-        <p className="mt-2 text-gray-600 dark:text-gray-400">Sign in to your account</p>
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+          Welcome Back
+        </h2>
+        <p className="mt-2 text-gray-600 dark:text-gray-400">
+          Sign in to your account
+        </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+<<<<<<< Updated upstream
           <>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -57,8 +173,30 @@ const LoginForm = ({ onToggleForm }) => {
                   required
                 />
               </div>
+=======
+        <>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Email Address
+            </label>
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+                className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                placeholder="Enter your email"
+                required
+                autoComplete="username"
+              />
+>>>>>>> Stashed changes
             </div>
+          </div>
 
+<<<<<<< Updated upstream
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Password
@@ -81,9 +219,38 @@ const LoginForm = ({ onToggleForm }) => {
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
+=======
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Password
+            </label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type={showPassword ? "text" : "password"}
+                value={formData.password}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+                className="w-full pl-10 pr-12 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                placeholder="Enter your password"
+                required
+                autoComplete="current-password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                {showPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
+              </button>
+>>>>>>> Stashed changes
             </div>
-          </>
-
+          </div>
+        </>
 
         {/* <div className="text-right">
           Remember Me
@@ -92,9 +259,17 @@ const LoginForm = ({ onToggleForm }) => {
               type="checkbox"
               className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
             />
-            <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">Remember me</span>
+            <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">
+              Remember me
+            </span>
           </label>
+<<<<<<< Updated upstream
           <a href="#" className="text-sm text-primary-500 hover:text-primary-300">
+=======
+          <a
+            href="#"
+            className="text-sm text-primary-600 hover:text-primary-500">
+>>>>>>> Stashed changes
             Forgot password?
           </a>
         </div> */}
@@ -103,9 +278,14 @@ const LoginForm = ({ onToggleForm }) => {
           type="submit"
           className="w-full"
           size="lg"
+<<<<<<< Updated upstream
           isLoading={isLoading}
         >
         Sign In
+=======
+          isLoading={isLoading}>
+          Sign In
+>>>>>>> Stashed changes
         </Button>
 
         <div className="relative">
@@ -113,7 +293,13 @@ const LoginForm = ({ onToggleForm }) => {
             <div className="w-full border-t border-gray-300 dark:border-gray-600" />
           </div>
           <div className="relative flex justify-center text-sm">
+<<<<<<< Updated upstream
             <span className="px-2 bg-white dark:bg-gray-900 text-gray-500 dark:text-white">Or continue with</span>
+=======
+            <span className="px-2 bg-white dark:bg-gray-900 text-gray-500">
+              Or continue with
+            </span>
+>>>>>>> Stashed changes
           </div>
         </div>
 
@@ -123,8 +309,7 @@ const LoginForm = ({ onToggleForm }) => {
           variant="outline"
           className="w-full"
           size="lg"
-          onClick={handleGoogleLogin}
-        >
+          onClick={handleGoogleLogin}>
           <img
             src="https://developers.google.com/identity/images/g-logo.png"
             alt="Google"
@@ -133,6 +318,7 @@ const LoginForm = ({ onToggleForm }) => {
           Sign in with Google
         </Button> */}
 
+<<<<<<< Updated upstream
         <p className="text-center text-sm text-gray-600 dark:text-gray-400 dark:text-white">
           Don't have an account?{' '}
           <button
@@ -140,10 +326,28 @@ const LoginForm = ({ onToggleForm }) => {
             onClick={onToggleForm}
             className="text-primary-600 dark:hover:text-primary-300 dark:text-primary-500 font-medium"
           >
+=======
+        <p className="text-center text-sm text-gray-600 dark:text-gray-400">
+          Don't have an account?{" "}
+          <button
+            type="button"
+            onClick={onToggleForm}
+            className="text-primary-600 hover:text-primary-500 font-medium">
+>>>>>>> Stashed changes
             Sign up
           </button>
         </p>
       </form>
+      <OtpModal
+        isOpen={showOtpModal}
+        onClose={() => setShowOtpModal(false)}
+        onVerify={handleVerifyOtp}
+        onResend={handleResendOtp}
+        loading={otpLoading}
+        error={otpError}
+        email={emailForOtp}
+        resendLoading={otpLoading}
+      />
     </div>
   );
 };

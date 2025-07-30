@@ -1,14 +1,13 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { sampleCandidate, sampleInterviewer } from "../data/sampleData";
-import { toast } from 'react-toastify';
-import { Cookie } from 'lucide-react';
+import { toast } from "react-toastify";
 
 const AuthContext = createContext(undefined);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
@@ -18,7 +17,7 @@ function AuthProvider({ children }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('user');
+    const savedUser = localStorage.getItem("user");
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
@@ -70,6 +69,7 @@ function AuthProvider({ children }) {
 
   const updateProfile = async (formData) =>{
     setIsLoading(true);
+<<<<<<< Updated upstream
     console.log("Form Data: ", formData);
 
     let userData; 
@@ -146,46 +146,127 @@ function AuthProvider({ children }) {
     });
     if(response.status != 200){
       toast.error("Ops, We are facing some issues, please try again");
+=======
+
+    try {
+      // Simulate API call
+      let response = await fetch("http://localhost:3001/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
+
+      console.log("Login response status:", response.status);
+
+      if (response.status !== 200) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error("Login error:", errorData);
+        toast.error(errorData.message || "Login failed. Please try again.");
+        setIsLoading(false);
+        return false;
+      }
+
+      response = await response.json();
+      localStorage.setItem("access_token", response?.token);
+      toast.success("Logged in succesfully");
+
+      if (userData.role === "interviewer") {
+        userData = { ...sampleInterviewer };
+      } else if (userData.role === "admin") {
+        userData = {
+          id: "3",
+          email: userData.email,
+          name: "Admin User",
+          role: "admin",
+          avatar:
+            "https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
+          profileCompletion: 100,
+          createdAt: new Date(),
+          permissions: ["all"],
+        };
+      } else {
+        userData = { ...sampleCandidate, email: userData.email };
+      }
+
+      setUser(userData);
+      localStorage.setItem("user", JSON.stringify(userData));
+      setIsLoading(false);
+      return true;
+    } catch (error) {
+      console.error("Login network error:", error);
+      toast.error("Network error. Please check your connection and try again.");
       setIsLoading(false);
       return false;
     }
-    setIsLoading(false);
-    toast.success("User is registed succesfully")
-    return true;
-  }catch(err){
-    toast.error("Ops! We are facing some issues, Please try again later")
-    return false;
-  }
+  };
+
+  const register = async (userData) => {
+    try {
+      setIsLoading(true);
+
+      const response = await fetch("http://localhost:3001/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
+
+      console.log("Register response status:", response.status);
+
+      if (response.status !== 200) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error("Register error:", errorData);
+        toast.error(
+          errorData.message || "Registration failed. Please try again."
+        );
+        setIsLoading(false);
+        return false;
+      }
+
+      setIsLoading(false);
+      toast.success("User registered successfully");
+      return true;
+    } catch (err) {
+      console.error("Register network error:", err);
+      toast.error("Network error. Please check your connection and try again.");
+>>>>>>> Stashed changes
+      setIsLoading(false);
+      return false;
+    }
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('user');
+    localStorage.removeItem("user");
   };
 
   const switchRole = (role) => {
     if (!user) return;
-    
+
     let updatedUser;
-    if (role === 'interviewer') {
+    if (role === "interviewer") {
       updatedUser = { ...sampleInterviewer };
-    } else if (role === 'admin') {
+    } else if (role === "admin") {
       updatedUser = {
-        id: '3',
+        id: "3",
         email: user.email,
-        name: 'Admin User',
-        role: 'admin',
-        avatar: 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop',
+        name: "Admin User",
+        role: "admin",
+        avatar:
+          "https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
         profileCompletion: 100,
         createdAt: new Date(),
-        permissions: ['all']
+        permissions: ["all"],
       };
     } else {
       updatedUser = { ...sampleCandidate, email: user.email };
     }
-    
+
     setUser(updatedUser);
-    localStorage.setItem('user', JSON.stringify(updatedUser));
+    localStorage.setItem("user", JSON.stringify(updatedUser));
   };
 
   const value = {
@@ -195,14 +276,13 @@ function AuthProvider({ children }) {
     register,
     isLoading,
     switchRole,
+<<<<<<< Updated upstream
     updateProfile
+=======
+>>>>>>> Stashed changes
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export { AuthProvider };

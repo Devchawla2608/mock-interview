@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Layout/Header';
 import Sidebar from '../components/Layout/Sidebar';
@@ -14,16 +15,34 @@ import InterviewRequests from './interviewer/InterviewRequests';
 import EarningsDashboard from './interviewer/EarningsDashboard';
 import InterviewerReviews from './interviewer/InterviewerReviews';
 import NotApprovedDashboard from './interviewer/NotApprovedDashboard';
+=======
+import React, { useState, useEffect } from "react";
+import Header from "../components/Layout/Header";
+import Sidebar from "../components/Layout/Sidebar";
+import CandidateDashboard from "./candidate/CandidateDashboard";
+import InterviewerDashboard from "./interviewer/InterviewerDashboard";
+// import AdminDashboard from './admin/AdminDashboard';
+import BookingFlow from "./candidate/BookingFlow";
+import InterviewManagement from "./candidate/InterviewManagement";
+import FeedbackReviews from "./candidate/FeedbackReviews";
+import PaymentHistory from "./candidate/PaymentHistory";
+import ProfileSettings from "./shared/ProfileSettings";
+import CalendarAvailability from "./interviewer/CalendarAvailability";
+import InterviewRequests from "./interviewer/InterviewRequests";
+import EarningsDashboard from "./interviewer/EarningsDashboard";
+import InterviewerReviews from "./interviewer/InterviewerReviews";
+>>>>>>> Stashed changes
 // import InterviewerApprovals from './admin/InterviewerApprovals';
 // import LiveInterviews from './admin/LiveInterviews';
 // import CompanyManagement from './admin/CompanyManagement';
 // import DisputeResolution from './admin/DisputeResolution';
 // import PlatformAnalytics from './admin/PlatformAnalytics';
 // import PlatformSettings from './admin/PlatformSettings';
-import { useAuth } from '../components/contexts/AuthContext';
+import { useAuth } from "../components/contexts/AuthContext";
 
 function Dashboard() {
   const { user } = useAuth();
+<<<<<<< Updated upstream
   const [activeItem, setActiveItem] = useState('dashboard');
   const [interviews, setInterviews] = useState([])
   const [completedInterviews, setCompletedInterviews] = useState([])
@@ -75,11 +94,44 @@ function Dashboard() {
     } 
     getUserInterviews()
   }, [forceRender])
+=======
+  const [activeItem, setActiveItem] = useState("dashboard");
+  const [interviews, setInterviews] = useState([]);
+  const [completedInterviews, setCompletedInterviews] = useState([]);
+  const [activeInterviews, setActiveInterviews] = useState([]);
+
+  useEffect(() => {
+    async function getUserInterviews() {
+      let user = JSON.parse(localStorage.getItem("user"));
+      let response = await fetch(
+        `http://localhost:3001/api/interview/interviews/${user.email}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      response = await response.json();
+      setInterviews(response?.interviews);
+      const completedInterviews = response?.interviews?.filter(
+        (interview) => interview.completed === true
+      );
+      const activeInterviews = response?.interviews?.filter(
+        (interview) => interview.completed !== true
+      );
+      setCompletedInterviews(completedInterviews);
+      setActiveInterviews(activeInterviews);
+    }
+    getUserInterviews();
+  }, []);
+>>>>>>> Stashed changes
 
   const renderContent = () => {
     switch (user && user.role) {
-      case 'candidate':
+      case "candidate":
         switch (activeItem) {
+<<<<<<< Updated upstream
           case 'dashboard':
             return <CandidateDashboard
               setActiveItem={setActiveItem}
@@ -116,6 +168,11 @@ function Dashboard() {
             />;
           case 'feedback':
             return <FeedbackReviews
+=======
+          case "dashboard":
+            return (
+              <CandidateDashboard
+>>>>>>> Stashed changes
                 setActiveItem={setActiveItem}
                 interviews={interviews}
                 setInterviews={setInterviews}
@@ -123,6 +180,7 @@ function Dashboard() {
                 setActiveInterviews={setActiveInterviews}
                 completedInterviews={completedInterviews}
                 setCompletedInterviews={setCompletedInterviews}
+<<<<<<< Updated upstream
                 requestedInterviews={requestedInterviews}
                 setRequestedInterviews={setRequestedInterviews}
                 approvedInterviews={approvedInterviews}
@@ -131,14 +189,36 @@ function Dashboard() {
                 forceRender={forceRender}
             />;
           case 'payments':
+=======
+              />
+            );
+          case "book-interview":
+            return <BookingFlow />;
+          case "interviews":
+            return (
+              <InterviewManagement
+                setActiveItem={setActiveItem}
+                interviews={interviews}
+                setInterviews={setInterviews}
+                activeInterviews={activeInterviews}
+                setActiveInterviews={setActiveInterviews}
+                completedInterviews={completedInterviews}
+                setCompletedInterviews={setCompletedInterviews}
+              />
+            );
+          case "feedback":
+            return <FeedbackReviews />;
+          case "payments":
+>>>>>>> Stashed changes
             return <PaymentHistory />;
-          case 'profile':
+          case "profile":
             return <ProfileSettings />;
           default:
             return <CandidateDashboard />;
         }
-      case 'interviewer':
+      case "interviewer":
         switch (activeItem) {
+<<<<<<< Updated upstream
             case 'dashboard':
             return user?.isApproved ? (
               <InterviewerDashboard
@@ -193,6 +273,20 @@ function Dashboard() {
           //   return <InterviewerReviews />;
           // case 'profile':
           //   return <ProfileSettings />;
+=======
+          case "dashboard":
+            return <InterviewerDashboard />;
+          case "calendar":
+            return <CalendarAvailability />;
+          case "interviews":
+            return <InterviewRequests />;
+          case "earnings":
+            return <EarningsDashboard />;
+          case "feedback":
+            return <InterviewerReviews />;
+          case "profile":
+            return <ProfileSettings />;
+>>>>>>> Stashed changes
           default:
             return <InterviewerDashboard />;
         }
@@ -226,9 +320,7 @@ function Dashboard() {
       <div className="flex h-[calc(100vh-80px)]">
         <Sidebar activeItem={activeItem} onItemClick={setActiveItem} />
         <main className="flex-1 overflow-auto">
-          <div className="p-6">
-            {renderContent()}
-          </div>
+          <div className="p-6">{renderContent()}</div>
         </main>
       </div>
     </div>
