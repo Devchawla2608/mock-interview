@@ -44,30 +44,33 @@ function Dashboard() {
       });
       response = await response.json()
       let myInterviews;
+      console.log("User" , user)
       if (user.role == 'candidate' || (user.isApproved == false &&  user.role == 'interviewer')) {
         myInterviews = response?.interviews?.filter(
           interview => interview.candidateEmail === user.email
         );
       } else {
+        console.log("Hi")
         myInterviews = response?.interviews?.filter(
           interview => interview.interviewerEmail == user?.email
         );
-        console.log("myInterviews" ,myInterviews)
+        console.log("myIn" ,myInterviews)
       }
       setInterviews(myInterviews)
         const mycompletedInterviews = myInterviews?.filter(
         interview => interview.completed == true
       );
       const myApprovedInterviews = myInterviews?.filter(
-        interview => interview.completed !== true && interview.status === "approved"
+        interview => interview.completed !== true && interview.status == "approved"
       );
       const myActiveInterviews = myInterviews?.filter(
-        interview => interview.completed !== true && interview.status === "active"
+        interview => interview.completed !== true && interview.status == "active"
       );
+
       const myRequestedInterviews = myInterviews?.filter(
-        interview => interview.completed !== true && interview.status === "requested"
+        interview => interview.completed !== true && interview.status == "requested"
       );
-      console.log("mycompletedInterviews" , mycompletedInterviews , myActiveInterviews , myRequestedInterviews , myApprovedInterviews)
+      console.log("mycompletedInterviews"  , myActiveInterviews )
       setCompletedInterviews(mycompletedInterviews)
       setActiveInterviews(myActiveInterviews)
       setRequestedInterviews(myRequestedInterviews)

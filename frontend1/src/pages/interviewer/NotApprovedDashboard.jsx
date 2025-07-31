@@ -7,11 +7,13 @@ import { sampleInterviews, companies } from '../../components/data/sampleData';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 import { Tooltip } from 'react-tooltip'
 import 'react-tooltip/dist/react-tooltip.css'
+import { useNavigate } from 'react-router-dom';
 
 
 function NotApprovedDashboard({setActiveItem , interviews , setInterviews , activeInterviews , setActiveInterviews , completedInterviews , setCompletedInterviews, requestedInterviews , setRequestedInterviews , approvedInterviews , setApprovedInterviews, forceRender , setForceRender}) {
   const { user } = useAuth();
   const candidate = user;
+  const navigate = useNavigate();
   const [averageRating , setAverageRating] = useState('')
   const [improvement , setImprovement] = useState('')
   const [companyLogo , setCompanyLogo] = useState("https://images.pexels.com/photos/270549/pexels-photo-270549.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop")
@@ -202,7 +204,7 @@ function generatePerformanceDataByDate(interviews) {
               </div>
             </div>
           </div>
-          <Button size="sm">
+          <Button size="sm" onClick={() => navigate('/interviewer-dashboard')} >
             Join Interview
             <ArrowRight className="w-4 h-4 ml-2" />
           </Button>

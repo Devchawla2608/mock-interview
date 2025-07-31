@@ -8,6 +8,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Dashboard from './pages/Dashboard';
 import BookingFlow from './pages/candidate/BookingFlow.jsx';
+import MeetingRoom from './pages/interviewer/MeetingRoom.jsx';
 
 const AppContent = () => {
   const { user, isLoading } = useAuth();
@@ -63,6 +64,10 @@ const AppContent = () => {
               replace 
             />
           } 
+        />
+                <Route 
+          path="/meeting-room" 
+          element={user ? <MeetingRoom /> : <Navigate to="/auth" replace />} 
         />
       </Routes>
     </Router>

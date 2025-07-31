@@ -6,6 +6,7 @@ import { useAuth } from '../../components/contexts/AuthContext';
 import { sampleInterviews, companies } from '../../components/data/sampleData';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 import { Tooltip } from 'react-tooltip'
+import { toast } from 'react-toastify';
 import 'react-tooltip/dist/react-tooltip.css'
 function CandidateDashboard({ setActiveItem, interviews, setInterviews, activeInterviews, setActiveInterviews, completedInterviews, setCompletedInterviews, requestedInterviews, setRequestedInterviews, approvedInterviews, setApprovedInterviews, forceRender , setForceRender }) {
   const { user } = useAuth();
@@ -38,6 +39,35 @@ function CandidateDashboard({ setActiveItem, interviews, setInterviews, activeIn
     const improvement = ((lastRating - firstRating) / firstRating) * 100;
     setImprovement(parseFloat(improvement.toFixed(2)))
   }
+
+async function handleJoinInterview(interviewId) {
+  try {
+    // Step 1: Fetch the interview
+    const interviewRes = await fetch(`/api/interview/getInterview/${interviewId}`, {
+      credentials: "include",
+    });
+    const interview = await interviewRes.json();
+
+    let meetingLink = interview?.meetingLink;
+
+    // Step 2: If no meeting link, try to create one
+    if (!meetingLink) {
+      toast.error("Please join after sometime!")
+    }
+    // Step 3: Open the meeting link
+    if (meetingLink) {
+      window.open(meetingLink, "_blank");
+    } else {
+      alert("Meeting link not available.");
+    }
+
+  } catch (error) {
+    console.error("Error in joining interview:", error);
+    alert("Something went wrong while joining the interview.");
+  }
+}
+
+ 
 
   function generatePerformanceDataByDate(interviews) {
     if (!Array.isArray(interviews)) return [];
@@ -190,7 +220,9 @@ function CandidateDashboard({ setActiveItem, interviews, setInterviews, activeIn
                             </div>
                           </div>
                         </div>
-                        <Button size="sm">
+                        <Button size="sm" 
+                        onClick={()=>{handleJoinInterview(interview?.interviewId)}}
+                        >
                           Join Interview
                           <ArrowRight className="w-4 h-4 ml-2" />
                         </Button>
