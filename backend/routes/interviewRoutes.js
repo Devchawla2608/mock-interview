@@ -9,4 +9,5 @@ router.get('/interviews/:userId/:role', interviewController.getUserInterviews);
 router.post('/getNewInterviewsForInterviewer' , interviewController.getNewInterviewsForInterviewer)
 router.post('/acceptInterview' , interviewController.acceptInterview)
 router.post('/completeInterview/:userId' , interviewController.completeInterview)
+router.get("/getInterview/:interviewId" , interviewController.getInterview)
 module.exports = router;

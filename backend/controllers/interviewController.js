@@ -1,6 +1,9 @@
 const Interview = require('../models/Interview');
 const mongoose = require('mongoose');
 const {categoryDetails} = require('../data/interviews');
+const { ulid } = require('ulid');
+const { google } = require("googleapis");
+
 
 exports.bookInterview = async (req, res) => {
   try {
@@ -19,6 +22,7 @@ exports.bookInterview = async (req, res) => {
     const userId = req.user._id;
 
 const newInterview = await Interview.create({
+  interviewId: ulid(),
   userId: userId,
   interviewerId: interviewerId,
   companyId,
@@ -157,3 +161,87 @@ exports.completeInterview = async (req , res) => {
   }
 }
 
+
+// controllers/interviewController.js
+// controllers/interviewController.js
+
+exports.createMeeting = async (req, res) => {
+  const { interviewId } = req.body;
+
+  // 1. Get interview to fetch start/end time
+  const interview = await Interview.findById(interviewId);
+  if (!interview || !interview.startTime || !interview.endTime) {
+    return res.status(400).json({ message: "Interview not found or missing time." });
+  }
+
+  const { startTime, endTime } = interview;
+  const authClient = req.authClient;
+  const calendar = google.calendar({ version: "v3", auth: authClient });
+
+  const response = await calendar.events.insert({
+    calendarId: "primary",
+    conferenceDataVersion: 1,
+    requestBody: {
+      summary: "TechMock Interview",
+      start: { dateTime: startTime },
+      end: { dateTime: endTime },
+      conferenceData: {
+        createRequest: {
+          requestId: uuidv4(),
+          conferenceSolutionKey: { type: "hangoutsMeet" },
+        },
+      },
+    },
+  });
+
+  const meetingLink = response?.data?.hangoutLink;
+  const eventId = response?.data?.id;
+
+  // 2. Save link to DB
+  interview.meetingLink = meetingLink;
+  interview.eventId = eventId;
+  await interview.save();
+
+  res.status(200).json({
+    message: "Meeting created",
+    data: { meetingLink, eventId }
+  });
+};
+
+
+exports.getInterview = async (req, res) => {
+  const { interviewId } = req.params;
+
+  try {
+    if (!interviewId) {
+      return res.status(400).json({
+        status: 400,
+        message: 'Interview ID is required.',
+        data: null,
+      });
+    }
+
+    const interview = await Interview.findOne({ interviewId });
+
+    if (!interview) {
+      return res.status(404).json({
+        status: 404,
+        message: 'Interview not found.',
+        data: null,
+      });
+    }
+
+    return res.status(200).json({
+      status: 200,
+      message: 'Interview fetched successfully.',
+      data: interview,
+    });
+  } catch (error) {
+    console.error(`[getInterview] Error for ID ${interviewId}:`, error);
+    return res.status(500).json({
+      status: 500,
+      message: 'Internal server error. Please try again later.',
+      data: null,
+    });
+  }
+};

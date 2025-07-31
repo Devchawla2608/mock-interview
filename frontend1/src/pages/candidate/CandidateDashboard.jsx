@@ -39,6 +39,62 @@ function CandidateDashboard({ setActiveItem, interviews, setInterviews, activeIn
     setImprovement(parseFloat(improvement.toFixed(2)))
   }
 
+async function handleJoinInterview(interviewId) {
+  try {
+    // Step 1: Fetch the interview
+    const interviewRes = await fetch(`/api/interview/getInterview/${interviewId}`, {
+      credentials: "include",
+    });
+    const interview = await interviewRes.json();
+
+    let meetingLink = interview?.meetingLink;
+
+    // Step 2: If no meeting link, try to create one
+    if (!meetingLink) {
+      const res = await fetch("/api/interview/create-meeting", {
+        method: "POST",
+        body: JSON.stringify({ interviewId }),
+        headers: { "Content-Type": "application/json" },
+        credentials: "include", // ensure session cookies are sent
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        if (data?.redirectUrl) {
+          // Redirect user to Google Auth
+          window.location.href = data.redirectUrl;
+          return;
+        }
+
+        if (data?.message?.includes("Google authentication required")) {
+          // Fallback: hardcoded redirect
+          window.location.href = "/api/auth/google";
+          return;
+        }
+
+        alert(data.message || "Failed to create meeting.");
+        return;
+      }
+
+      meetingLink = data?.data?.meetingLink;
+    }
+
+    // Step 3: Open the meeting link
+    if (meetingLink) {
+      window.open(meetingLink, "_blank");
+    } else {
+      alert("Meeting link not available.");
+    }
+
+  } catch (error) {
+    console.error("Error in joining interview:", error);
+    alert("Something went wrong while joining the interview.");
+  }
+}
+
+ 
+
   function generatePerformanceDataByDate(interviews) {
     if (!Array.isArray(interviews)) return [];
 
@@ -190,7 +246,9 @@ function CandidateDashboard({ setActiveItem, interviews, setInterviews, activeIn
                             </div>
                           </div>
                         </div>
-                        <Button size="sm">
+                        <Button size="sm" 
+                        onClick={()=>{handleJoinInterview(interview?.interviewId)}}
+                        >
                           Join Interview
                           <ArrowRight className="w-4 h-4 ml-2" />
                         </Button>
