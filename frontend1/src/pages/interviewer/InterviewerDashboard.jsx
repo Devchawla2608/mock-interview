@@ -1,17 +1,51 @@
 import React, { useEffect, useState } from 'react';
-import { DollarSign, Calendar, Star, TrendingUp, Users, Clock, Award, Target, RefreshCcw } from 'lucide-react';
+import { DollarSign, Calendar, Star, TrendingUp, Users, Clock, Award, Target, RefreshCcw, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import Card from '../../components/UI/Card';
 import Button from '../../components/UI/Button';
 import { useAuth } from '../../components/contexts/AuthContext';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { toast } from 'react-toastify';
+
+
 function InterviewerDashboard({ setActiveItem, interviews, setInterviews, activeInterviews, setActiveInterviews, completedInterviews, setCompletedInterviews, requestedInterviews, setRequestedInterviews, approvedInterviews, setApprovedInterviews, forceRender, setForceRender }) {
   const { user } = useAuth();
   const [averageRating, setAverageRating] = useState('')
   const [growth, setGrowth] = useState('')
   const [newInterviews, setNewInterviews] = useState([]);
   const [loading, setLoading] = useState(false);
+    const [companyLogo, setCompanyLogo] = useState("https://images.pexels.com/photos/270549/pexels-photo-270549.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop")
 
+    const navigate = useNavigate();
+
+
+    
+    async function handleJoinInterview(interviewId) {
+      try {
+        // Step 1: Fetch the interview
+        const interviewRes = await fetch(`/api/interview/getInterview/${interviewId}`, {
+          credentials: "include",
+        });
+        const interview = await interviewRes.json();
+    
+        let meetingLink = interview?.meetingLink;
+    
+        // Step 2: If no meeting link, try to create one
+        if (!meetingLink) {
+          toast.error("Please join after sometime!")
+        }
+        // Step 3: Open the meeting link
+        if (meetingLink) {
+          window.open(meetingLink, "_blank");
+        } else {
+          alert("Meeting link not available.");
+        }
+    
+      } catch (error) {
+        console.error("Error in joining interview:", error);
+        alert("Something went wrong while joining the interview.");
+      }
+    }
 
   const fetchInterviews = async () => {
     try {
@@ -374,58 +408,75 @@ function InterviewerDashboard({ setActiveItem, interviews, setInterviews, active
             </div>
           </Card>
 
-          {activeInterviews.length != 0 && (<Card>
-            <h1>{activeInterviews.lenght}</h1>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                Active Interview
-              </h2>
-              <div className="flex items-center gap-2">
-                <Button variant="ghost" size="sm">View All</Button>
+          {activeInterviews?.length != 0 && (
+            <Card>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Upcoming Interview</h2>
+                <span className="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full text-sm font-medium">
+                  Confirmed
+                </span>
               </div>
-            </div>
-            <div className="space-y-4">
-              {activeInterviews
-                .map((interview, index) => {
-                  const candidateName = interview.candidateName;
-                  const category = interview.category || "-";
-                  const date = interview.selectedDate
-                    ? new Date(interview.selectedDate).toLocaleDateString(undefined, {
-                      month: 'short',
-                      day: 'numeric',
-                    })
-                    : "";
-                  const time = interview.startTime
-                    ? new Date(`1970-01-01T${interview.startTime}`).toLocaleTimeString([], {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })
-                    : "";
+              <div className="space-y-6">
+                {activeInterviews?.map((interview) => {
 
                   return (
-                    <div key={interview._id || index} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                      <div className="flex items-center space-x-4">
-                        <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900 rounded-full flex items-center justify-center">
-                          <Users className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+                    <div
+                      key={interview._id}
+                      className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-6"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center space-x-4">
+                          <img
+                            src={companyLogo}
+                            alt="Company"
+                            className="w-12 h-12 rounded-lg object-cover"
+                          />
+                          <div>
+                            <h3 className="font-semibold text-gray-900 dark:text-white">
+                              {interview?.companyName || "Unknown Company"} Interview
+                            </h3>
+                            <p className="text-gray-600 dark:text-gray-400">
+                              Category {interview.category}
+                            </p>
+                            <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500 dark:text-gray-400">
+                              <div className="flex items-center space-x-1">
+                                <Calendar className="w-4 h-4" />
+                                <span className="font-medium">
+                                  {new Date(interview.selectedDate).toLocaleDateString(undefined, {
+                                    weekday: 'short',
+                                    year: 'numeric',
+                                    month: 'short',
+                                    day: 'numeric',
+                                  })}
+                                </span>
+                              </div>
+                              <div className="flex items-center space-x-1">
+                                <Clock className="w-4 h-4" />
+                                <span className="font-medium">
+                                  {interview.startTime
+                                    ? new Date(`1970-01-01T${interview.startTime}`).toLocaleTimeString([], {
+                                      hour: '2-digit',
+                                      minute: '2-digit',
+                                    })
+                                    : ''}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                        <div>
-                          <h3 className="font-medium text-gray-900 dark:text-white">{interview?.candidateEmail}</h3>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
-                            {interview?.companyName} • Category {interview?.category}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-3">
-                        <div className="text-right text-sm">
-                          <p className="text-gray-900 dark:text-white font-medium">{date}</p>
-                          <p className="text-gray-500 dark:text-gray-400">{time}</p>
-                        </div>
+                        <Button size="sm" 
+                        onClick={() => navigate('/meeting-room')}
+                        >
+                          Join Interview
+                          <ArrowRight className="w-4 h-4 ml-2" />
+                        </Button>
                       </div>
                     </div>
                   );
                 })}
-            </div>
-          </Card>)}
+              </div>
+            </Card>
+          )}
 
         </div>
 

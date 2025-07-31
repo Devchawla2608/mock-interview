@@ -6,6 +6,7 @@ import { useAuth } from '../../components/contexts/AuthContext';
 import { sampleInterviews, companies } from '../../components/data/sampleData';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 import { Tooltip } from 'react-tooltip'
+import { toast } from 'react-toastify';
 import 'react-tooltip/dist/react-tooltip.css'
 function CandidateDashboard({ setActiveItem, interviews, setInterviews, activeInterviews, setActiveInterviews, completedInterviews, setCompletedInterviews, requestedInterviews, setRequestedInterviews, approvedInterviews, setApprovedInterviews, forceRender , setForceRender }) {
   const { user } = useAuth();
@@ -51,35 +52,8 @@ async function handleJoinInterview(interviewId) {
 
     // Step 2: If no meeting link, try to create one
     if (!meetingLink) {
-      const res = await fetch("/api/interview/create-meeting", {
-        method: "POST",
-        body: JSON.stringify({ interviewId }),
-        headers: { "Content-Type": "application/json" },
-        credentials: "include", // ensure session cookies are sent
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        if (data?.redirectUrl) {
-          // Redirect user to Google Auth
-          window.location.href = data.redirectUrl;
-          return;
-        }
-
-        if (data?.message?.includes("Google authentication required")) {
-          // Fallback: hardcoded redirect
-          window.location.href = "/api/auth/google";
-          return;
-        }
-
-        alert(data.message || "Failed to create meeting.");
-        return;
-      }
-
-      meetingLink = data?.data?.meetingLink;
+      toast.error("Please join after sometime!")
     }
-
     // Step 3: Open the meeting link
     if (meetingLink) {
       window.open(meetingLink, "_blank");
