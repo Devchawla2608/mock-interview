@@ -20,7 +20,6 @@ exports.bookInterview = async (req, res) => {
       completed
     } = req.body;
     const userId = req.user._id;
-
 const newInterview = await Interview.create({
   interviewId: ulid(),
   userId: userId,

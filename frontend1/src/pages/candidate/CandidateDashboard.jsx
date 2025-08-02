@@ -40,34 +40,33 @@ function CandidateDashboard({ setActiveItem, interviews, setInterviews, activeIn
     setImprovement(parseFloat(improvement.toFixed(2)))
   }
 
-async function handleJoinInterview(interviewId) {
-  try {
-    // Step 1: Fetch the interview
-    const interviewRes = await fetch(`/api/interview/getInterview/${interviewId}`, {
-      credentials: "include",
-    });
-    const interview = await interviewRes.json();
+  async function handleJoinInterview(interviewId) {
+    try {
+      // Step 1: Fetch the interview
+      const interviewRes = await fetch(`/api/interview/getInterview/${interviewId}`, {
+        credentials: "include",
+      });
+      const interview = await interviewRes.json();
 
-    let meetingLink = interview?.meetingLink;
+      let meetingLink = interview?.meetingLink;
 
-    // Step 2: If no meeting link, try to create one
-    if (!meetingLink) {
-      toast.error("Please join after sometime!")
+      // Step 2: If no meeting link, try to create one
+      if (!meetingLink) {
+        toast.error("Please join after sometime!")
+      }
+      // Step 3: Open the meeting link
+      if (meetingLink) {
+        window.open(meetingLink, "_blank");
+      } else {
+        alert("Meeting link not available.");
+      }
+
+    } catch (error) {
+      console.error("Error in joining interview:", error);
+      alert("Something went wrong while joining the interview.");
     }
-    // Step 3: Open the meeting link
-    if (meetingLink) {
-      window.open(meetingLink, "_blank");
-    } else {
-      alert("Meeting link not available.");
-    }
-
-  } catch (error) {
-    console.error("Error in joining interview:", error);
-    alert("Something went wrong while joining the interview.");
   }
-}
 
- 
 
   function generatePerformanceDataByDate(interviews) {
     if (!Array.isArray(interviews)) return [];
