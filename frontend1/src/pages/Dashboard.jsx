@@ -14,12 +14,12 @@ import InterviewRequests from './interviewer/InterviewRequests';
 import EarningsDashboard from './interviewer/EarningsDashboard';
 import InterviewerReviews from './interviewer/InterviewerReviews';
 import NotApprovedDashboard from './interviewer/NotApprovedDashboard';
-// import InterviewerApprovals from './admin/InterviewerApprovals';
-// import LiveInterviews from './admin/LiveInterviews';
-// import CompanyManagement from './admin/CompanyManagement';
-// import DisputeResolution from './admin/DisputeResolution';
-// import PlatformAnalytics from './admin/PlatformAnalytics';
-// import PlatformSettings from './admin/PlatformSettings';
+import InterviewerApprovals from './admin/InterviewerApprovals';
+import LiveInterviews from './admin/LiveInterviews';
+import CompanyManagement from './admin/CompanyManagement';
+import DisputeResolution from './admin/DisputeResolution';
+import PlatformAnalytics from './admin/PlatformAnalytics';
+import PlatformSettings from './admin/PlatformSettings';
 import { useAuth } from '../components/contexts/AuthContext';
 
 function Dashboard() {
@@ -203,20 +203,20 @@ function Dashboard() {
         switch (activeItem) {
           case 'dashboard':
             return <AdminDashboard />;
-          // case 'interviewers':
-          //   return <InterviewerApprovals />;
-          // case 'interviews':
-          //   return <LiveInterviews />;
-          // case 'companies':
-          //   return <CompanyManagement />;
-          // case 'disputes':
-          //   return <DisputeResolution />;
-          // case 'analytics':
-          //   return <PlatformAnalytics />;
-          // case 'settings':
-          //   return <PlatformSettings />;
-          // default:
-          //   return <AdminDashboard />;
+          case 'interviewers':
+            return <InterviewerApprovals />;
+          case 'interviews':
+            return <LiveInterviews />;
+          case 'companies':
+            return <CompanyManagement />;
+          case 'disputes':
+            return <DisputeResolution />;
+          case 'analytics':
+            return <PlatformAnalytics />;
+          case 'settings':
+            return <PlatformSettings />;
+          default:
+            return <AdminDashboard />;
         }
       default:
         return <CandidateDashboard />;
